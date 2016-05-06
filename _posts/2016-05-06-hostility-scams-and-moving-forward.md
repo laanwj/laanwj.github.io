@@ -87,8 +87,8 @@ job.
 This is not an idle concern, for us. Remember how
 [the bitcoin sourceforge was hacked using Satoshi's inactive account](https://news.ycombinator.com/item?id=8287905)?
 
-Gavin hadn't done anything as a maintainer for a year or so, and before that
-he already was hardly active for a long time.
+Gavin hadn't done anything as a maintainer for [a year or so](https://github.com/bitcoin/bitcoin/commit/3c60937ce6a251e565e169715ebb2f3dd76825c4), and before that
+he already was [hardly active for a long time](https://github.com/bitcoin/bitcoin/commits?author=gavinandresen).
 
 That's perfectly fine, people move on to other things, other interests, no one
 is bound to this project for life. However, the world also moves on, and if
