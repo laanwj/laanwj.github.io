@@ -98,7 +98,7 @@ to revoke those privileges anyway.
 
 I have personally asked, in a phone conversation as well as in mail, Gavin
 various times to give up his privileges with the github project himself - and
-so have other people. The response was always that he'd sleep on it. Despite
+so have other people. The response was always that he'd "sleep on it". Despite
 allegations of the opposite, this did not come out of the blue.
 
 ### Crossing the Rubicon
