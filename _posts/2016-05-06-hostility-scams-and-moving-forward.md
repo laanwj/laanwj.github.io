@@ -77,17 +77,15 @@ he'd give away the repository to a scammer.
 
 But in a way this was only the final straw. His privileges were seen as a
 liability by members of the project for a while (and not just because of [proxy
-threats from Mike Hearn](https://twitter.com/petertoddbtc/status/611368079117942786) ) to shut
+threats from Mike Hearn](https://twitter.com/petertoddbtc/status/611368079117942786) to shut
 down the project).
 
-The [https://en.wikipedia.org/wiki/Principle_of_least_privilege](principle of
-least privilege) in computer security says that users, should only have access
+The [principle of least privilege](https://en.wikipedia.org/wiki/Principle_of_least_privilege) in computer security says that users, should only have access
 to the resources they need for the purposes that are essential to the user's
 job. 
 
 This is not an idle concern, for us. Remember how
-[https://news.ycombinator.com/item?id=8287905](the bitcoin sourceforge was
-hacked using Satoshi's inactive account)?
+[the bitcoin sourceforge was hacked using Satoshi's inactive account](https://news.ycombinator.com/item?id=8287905)?
 
 Gavin hadn't done anything as a maintainer for a year or so, and before that
 he already was hardly active for a long time.
@@ -95,10 +93,11 @@ he already was hardly active for a long time.
 That's perfectly fine, people move on to other things, other interests, no one
 is bound to this project for life. However, the world also moves on, and if
 you go on to other things you can't expect to be able to come back at any
-point and that everything is in the same place where you left it.
+point and that everything is in the same place where you left it. It was time
+to revoke those privileges anyway.
 
 I have personally asked, in a phone conversation as well as in mail, Gavin
-various times to give up his privileges with the github project. The response
+various times to give up his privileges with the github project himself. The response
 was always that he'd sleep on it. Despite allegations of the opposite, this did
 not come out of the blue.
 
