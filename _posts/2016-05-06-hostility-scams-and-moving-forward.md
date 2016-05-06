@@ -77,7 +77,7 @@ he'd give away the repository to a scammer.
 
 But in a way this was only the final straw. His privileges were seen as a
 liability by members of the project for a while (and not just because of [proxy
-threats from Mike Hearn][https://twitter.com/petertoddbtc/status/611368079117942786]) to shut
+threats from Mike Hearn](https://twitter.com/petertoddbtc/status/611368079117942786) ) to shut
 down the project).
 
 The [https://en.wikipedia.org/wiki/Principle_of_least_privilege](principle of
