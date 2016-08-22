@@ -17,3 +17,7 @@ The details can be found in a gist on github
 this up to date when I find more information. Please suggest changes
 if you find anything out that I haven't noticed yet.
 
+(FUNKSPIEL, literal translated "RADIO PLAY", is the name of a WW2 operation in
+which Nazis impersonated specific radio operators to send false messages. This
+was used in the plot of Cryptonomicon by Neal Stephenson. I don't think MiTM
+attacks existed back then.)
