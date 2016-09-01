@@ -291,3 +291,32 @@ footer {
 // ... Otherwise it really bloats up the top of the CSS file and makes it difficult to find the start
 @import "highlights";
 @import "svg-icons";
+
+// Shade `text`
+code.highlighter-rouge {
+    background-color: rgba(0,0,0,0.04);
+}
+
+// Table formatting
+.post table,tr,td,th {
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: 1px solid #c0c0c0;
+}
+.post th {
+    font-weight: bold;
+}
+.post table tr:nth-child(2n) {
+    background-color: #f8f8f8;
+}
+.post td {
+    padding-bottom: 6px;
+    padding-left: 13px;
+    padding-right: 13px;
+    padding-top: 6px;
+}
+
+// Specific (code samples, radare-exported asm)
+pre { font-family: monospace; white-space: pre; font-size: 80%; line-height: 1.0; }
+pre.radareasm { background-color: #000000; color: #c0c0c0; overflow: scroll; }
+
