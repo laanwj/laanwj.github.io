@@ -50,9 +50,9 @@ It looks like this is a noteworthy module after all:
 - Some of the functions are redirected to a local function, others to
   0x00000000, which likely means that they are disabled completely.
 
-It does give a huge hint at what the goal of this module is: cripple or disable IPSEC! It appears it can be used to selectively disable ciphers, HMAC algorithms, and random number generation. It is obvious how this is useful to anyone trying to either intercept or insert themselves into a target's VPN network.
+It does give a huge hint at what the goal of this module is: cripple or disable IPsec! It appears it can be used to selectively disable ciphers, HMAC algorithms, and random number generation. It is obvious how this is useful to anyone trying to either intercept or insert themselves into a target's VPN network.
 
-Shunting the function `get_random_bytes` will have the effect of disabling *all* random number generation in the kernel. Not just for IPSEC, but also for e.g. TCP sequence numbers, enabling IP spoofing. It is not used for `/dev/[u]random` however, so user space processes cannot easily detect this.  
+Shunting the function `get_random_bytes` will have the effect of disabling *all* random number generation in the kernel. Not just for IPsec, but also for e.g. TCP sequence numbers, enabling IP spoofing. It is not used for `/dev/[u]random` however, so user space processes cannot easily detect this.  
 
 [nohats.ca](https://nohats.ca/wordpress/blog/2014/12/29/dont-stop-using-ipsec-just-yet/) writes, in the conclusion of an artice about IPsec and the Snowden revelations:
 
