@@ -32,6 +32,12 @@ The "FEINTCLOUD" name doesn't seem to turn up anything on Google. Has anyone
 encountered this project in one of the Snowden documents? It vaguely rings
 familiar.
 
+<i>Edit 2016-09-04</i>: it looks like BBANJO (BANANABANJO?) in the BANANAGLEE framework is
+also a beaconing module, and various versions are available in the dump
+(`Firewall/BANANAGLEE/*/Install/LP/Modules/PIX/BBANJO-*`). May be interesting
+to reverse-engineer to get more insight. Could be fairly straightforward as
+local symbols such as `obfuscate_payload1` are still present.
+
 <small>Note: I'm continuing work on reverse-engineering the BLATSTING rootkit
 and reporting [here](https://gist.github.com/laanwj/9e5e404266a8956beabde522f97c421b).</small>
 
