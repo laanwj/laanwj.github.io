@@ -97,7 +97,7 @@ Packet format:
       └──────────────────┘
 </pre>
 
-After decrypting the inner payload, it is hashed using SHA1 and the first 16 bytes of that hash are compared against the IV in the packet. If they match, the packet is accepted, otherwise it is rejected. This is "Authenticate and encrypt" and violates the [Cryptographic Doom Principle](https://moxie.org/blog/the-cryptographic-doom-principle/) but I don't think the attacks described there are applicable. But who knows.
+After decrypting the inner payload, it is hashed using SHA1 and the first 16 bytes of that hash are compared against the IV in the packet. If they match, the packet is accepted, otherwise it is rejected. This is "Authenticate and encrypt" and violates the [Cryptographic Doom Principle](https://moxie.org/blog/the-cryptographic-doom-principle/) but I don't think the attacks described there are applicable. But who knows. Using plain SHA1 of the plaintext means that theoretically some information is leaked. Also the same crypto key is used in both directions.
 
 The decrypted payload looks like this:
 <pre>
@@ -172,6 +172,6 @@ Also remember the weird keyed checksum that we started with. It's not exactly a 
 
 Unfortunately this does have a ≈4% false positive rate. This much higher than expected with a 8+4 byte input and 4 byte output, it turns out that for this hash function the coverage of the output space for the same input with different keys is really small. E.g. for the same 8 byte arg1, trying all 2^32 arg2 possibilities will result in only 65495 different outputs. Due to (nearly) XORing them together the effect of both halves of `arg2` is very closely correlated: there is effectively only a 16 bit key space.
 
-That's a bit disappointing, but by looking at the sizes of the packets as well as the checksum, the false-positive rate could be brought down.
+That's a bit disappointing, but by looking at the sizes of the packets as well as the checksum, the false-positive rate could be brought down. Or maybe by correlating multiple packets.
 
 None of this helps to decrypt the packets, only detect them; as said before the key for RC6-OFB is distinct from the checksum key. The crypto key can only be extracted from the implant itself (safest way would be to dump kernel memory). Even though there are session keys, these do not offer any forward secrecy, so once this key is available all prior traffic can be decrypted.
