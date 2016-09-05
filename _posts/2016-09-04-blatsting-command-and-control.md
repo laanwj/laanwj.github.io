@@ -52,7 +52,7 @@ The implant (fancy spy word for rootkit) communicates with the Listening Post (s
     ╚═══════════════════╝         ╚═══════════╝
 </pre>
 
-Interesting is that for the initial session setup, the source and destination IP address as well as ports do not matter. The only requirements for accepting the initial packets are that the size (including IP and UDP header, excluding Ethernet header) matches 68 or 72 bytes, and that a special checksum computed on the packet matches the one in the packet.  This is custom checksum, illustrated by the following C code:
+Interesting is that for the initial session setup, the source and destination IP address as well as ports do not matter. The only requirements for accepting the initial packets are that the size (including IP and UDP header, excluding Ethernet header) matches 68 or 72 bytes, and that a special checksum computed on the packet matches the one in the packet.  This is a custom checksum, illustrated by the following C code:
 
 ```c
 /* cnc mystery packet checksum
