@@ -155,7 +155,7 @@ I haven't looked into detail of all the specific packets here. Some of it looks 
 
 ### Detecting BLATSTING C&C packets
 
-Now we get to the interesting part: can we detect BLATSTING C&C packets without knowing any secret key data? Remember that the session setup packets received by the implant are always UDP packets of 68 and 72 bytes (including IPv4 header). The packets going the other way appear to have a fixed size too.
+Now we get to the interesting part: can we detect BLATSTING C&C packets without knowing any secret key data? Remember that the session setup packets received by the implant are always UDP packets of 68 and 72 bytes (including IPv4 header), with arbitrary source and destination ports. The packets going the other way appear to have a fixed size too.
 
 A session starts off like this:
 <pre>
