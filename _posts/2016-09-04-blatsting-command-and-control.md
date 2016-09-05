@@ -166,7 +166,7 @@ A session starts off like this:
     |<------------|      240 bytes (`AUTH_RESP`)
 </pre>
 
-That's something that a IDS rule could be configured to look for.
+That's something that a IDS rule could be configured to look for. Another peculiarity of the outgoing packets (from the implant) is that they do not have the UDP checksum set (something that is allowed by RFC768). I don't know how common this is, but at least the Linux network stack computes it always.
 
 Also remember the weird keyed checksum that we started with. It's not exactly a secure hash function and it's possible to check it without knowing the key. This could be done by brute-force (32-bit key space, but still that's a lot of overhead per packet) or by solving the equations, or by using a constraint solver such as [Z3](https://github.com/Z3Prover/z3). I used the latter approach in [z3_cnc_checksum.py]({{ site.baseurl }}/assets/2016-09-04-blatsting-command-and-control/z3_cnc_checksum.py). Given the checksum output and input it can check whether there is any possible key that will make it match the checksum.
 
