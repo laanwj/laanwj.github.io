@@ -8,7 +8,7 @@ In this installment I'm going to describe the Command-and-Control (or C&C) proto
 
 ### Setup
 
-To figure out the details of how the communication works I've set up a simulation environment, which I've termed BEECHPONYZOO (named after BLATSTING's probable predecessor), where BLATSTING modules running in a simulation can communicate with the Listening Post executable `lp` running in a VM, in a way isolated from the real network:
+To figure out the details of how the communication works I've set up a simulation environment, which I've termed BEECHPONYZOO (named after BLATSTING's probable predecessor), where BLATSTING modules running in a simulation can communicate with the Listening Post executable `lp` running in a VM, in a way isolated from the real network and bare hardware:
 
 <pre>
   BEECHPONYZOO
@@ -36,7 +36,7 @@ See [the gist](https://gist.github.com/laanwj/9e5e404266a8956beabde522f97c421b#f
 
 ### Network protocol
 
-The implant (fancy spy word for rootkit) communicates with the Listening Post (spy for Command-and-Control program) using UDP datagrams over a IPv4 network. Those hoping to find IRC servers, bots and clients as in [this presentation](http://www.spiegel.de/media/media-35689.pdf) will unfortunately be disappointed.
+The implant (fancy spy word for rootkit) communicates with the Listening Post (spy for Command-and-Control program) using UDP datagrams over a IPv4 network. Those hoping to find IRC servers, bots and clients as in [this presentation](http://www.spiegel.de/media/media-35689.pdf) h/t: [electrospaces.net](https://electrospaces.blogspot.nl/2016/08/is-shadow-brokers-leak-latest-in-series.html)) will unfortunately be disappointed.
 
 <pre>
     ╔═══════════════════╗         ╔═══════════╗
