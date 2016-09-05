@@ -162,7 +162,7 @@ A session starts off like this:
    LP          implant
     |------------>|       72 bytes (`HELLO`)
     |<------------|       80 bytes (`CHALLENGE`)
-    |------------>|       68 bytes (`AUTH_RESP`)
+    |------------>|       72 bytes (`AUTH_RESP`)
     |<------------|      240 bytes (`AUTH_RESP`)
 </pre>
 
