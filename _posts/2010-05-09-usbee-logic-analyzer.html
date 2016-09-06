@@ -1,0 +1,37 @@
+---
+layout: post
+title: "USBee logic analyzer"
+author: Wladimir J. van der Laan
+permalink: /2010/5/19/usbee-logic-analyzer
+tags: [F5L-049, homebase, logic analyzer, reverse engineering, USBee]
+categories: [embedded]
+---
+
+<intro>
+<p>Recently I ordered a <a href="http://www.usbee.com/sx.html">USBee</a> logic analyzer. The Windows tooling is pretty nice, it comes with built-in serial decoding, which will come in handy (Unfortunately, it doesn't seem to be supported on Linux at all al the moment. Some people are working on it, see <a href="http://www.sigrok.org/wiki/CWAV_USBee_SX/Info">sigrok</a> and <a href="http://www.usbee.com/xproject.html">x-project</a>).</p>
+</intro>
+
+<p>I'm going to use it to try to find a serial port header on a <a href="http://www.belkin.com/IWCatProductPage.process?Product_Id=505043">LAN/USB gateway</a> which won't boot due to a firmware problem (caused by myself, trying to upload the compiled <a href="http://www.belkin.com/support/opensource/">GPL firmware</a>, I assume I used the wrong version of <a href="http://squashfs.sourceforge.net/">squashfs</a>). This is my first experience with a logic analyzer, but I'm not exactly new to reverse engineering. Hopefully I can get a clue as to how to make the device useful again.</p>
+<p>Looking at the board, it has two headers, one 6 pins and 2x7 pin (probaly <a href="http://www.linux-mips.org/wiki/JTAG">EJTAG</a>). The first header is the first one that I will try in search of a serial port. The cable ends fit nicely over the header pins and the device was hooked up in no time:</p>
+<p><img src="{{ site.baseurl }}/assets{{ page.id }}/usbeehb.jpg"></p>
+</intro>
+<p>First, selecting the sample rate and time to sample. 20 seconds at 1 million bits per second should be enough to capture the startup sequence,</p>
+<p><img src="{{ site.baseurl }}/assets{{ page.id }}/samplerate.png"></p>
+<p>20 seconds after starting capture and powering up the device, it looks like the following:</p>
+<p><img src="{{ site.baseurl }}/assets{{ page.id }}/signal.png"></p>
+<p>Great! The second (brown) pin has a signal. Let's see if it is serial. Pretty nice, after a few tries setting the baudrate (which seems to be 115200, closest to the 2*58,823Khz reported frequency), the serial decoder has a match an text appears:</p>
+<p><img src="{{ site.baseurl }}/assets{{ page.id }}/program.png"></p>
+<p>Knowing just how much text the Linux kernel generates, it will be pretty hard to read the entire text this way, scrolling through the signal. Luckily, export of the bus data (the event log at the right of the window) to .csv format is possible. So with a simple Python script I converted it to text (<a href="{{ site.baseurl }}/assets{{ page.id }}/out.txt">link to full text</a>):</p>
+<pre>
+U
+[FF][FF]Linux version 2.6.25.17 (root@phosphor) (gcc version 3.4.4) #5 Mon Apr 19 18:25:45 CEST 2010
+flash_size passed from bootloader = -2144940312
+CPU revision is: 00019374 (MIPS 24K)
+Determined physical RAM map:
+ memory: 02000000 @ 00000000 (usable)
+User-defined physical RAM map:
+ memory: 04000000 @ 00000000 (usable)
+...
+</pre>
+<p>The output doesn't give me any clue what is going wrong. It is a normal Linux boot, it finds the flash unit and mounts it using squashfs. One curious thing is that there is exactly a second time between the "U" (<a href="http://www.denx.de/wiki/U-Boot">U-Boot</a>?) and the rest of the boot process, which hints that there might be a way to interrupt it and go to a boot prompt. The USBee is capable of generating signals too, hopefully it can inject text.</p>
+<p>To be continued...</p>

@@ -1,0 +1,80 @@
+---
+layout: post
+title: "About ACPI (DSDT)"
+author: Wladimir J. van der Laan
+permalink: /2010/5/18/dsdt
+tags: [abbreviation hell, acer, acpi, dsdt, reverse engineering, wmid]
+categories: [linux,reverse-engineering]
+---
+
+<intro>
+<p>The <a href="http://wiki.archlinux.org/index.php/DSDT">DSDT</a> (Differentiated System Description Table) is a part of the <a href="http://www.acpi.info/">ACPI</a> (Advanced Configuration and Power Interface) specification, which supplies configuration information about a base system. ACPI capable computers come with a preinstalled DSDT from the manufacturer stored in BIOS. This is a piece of code in a special language, AML, which is evaluated by the OS with an in-kernel interpreter.</p>
+</intro>
+
+<p>It implements functionality such as turning off the screen when the laptop lid is closed, changing the screen brightness when the Fn-key combinations are used, and enabling/disabling hardware such as the Wifi transmitter for power saving.</p>
+<p>Slight differences in the interpretation between Linux and Windows of the DSDT can cause problems such as, in my case, the wireless kill switch and Bluetooth somehow doesn't work. The other fn-X keys do work...</p>
+
+<p>To troubleshoot issues, the code can be compiled and decompiled by the <a href="http://www.acpica.org/">AML compiler, iasl</a>.</p>
+<p>The problem is that it appears to be hardly documented. The language itself is explained in the <a href="http://www.acpi.info/spec.htm">ACPI specification</a>, but obviously that excludes the platform specifics which are the interesting part.</p>
+<p>To make matters worse, a special 'device' is implemented by DSDT, called WMID (Windows Management Instrumentation Device), that offers services (such as switching devices on and off for power saving) to Windows. The course interface is documented, but the platform specifics are, again, not.</p>
+<p>The interesting device driven from DSDT 'code' is EC0, the Embedded Controller, a microprocessor that controls power management and other internal hardware. This is the part that is different between mainboards and laptop types.</p>
+
+<p>Example code looks like this:</p>
+<pre>
+    Store (^^LPC.EC0.WLEX, AS00)
+    Sleep (0x1E)
+    Store (^^LPC.EC0.BTEX, AS01)
+    Sleep (0x1E)
+    Store (Zero, AS02)
+    Store (^^LPC.EC0.W3GE, AS04)
+    Sleep (0x1E)
+    Store (^^LPC.EC0.MPEX, AS05)
+</pre>
+
+<p>Here the guessing begins. What are the four letter abbreviations? WLEX=Wireless? BTEX=Bluetooth? W3GE=3G (not supported on mine), and MPEX?</p>
+
+<pre>
+    CreateField (AADS, Zero, 0x04, AS00) /* 0x0000000F */
+    CreateField (AADS, 0x04, One, AS01)  /* 0x00000010 */
+    CreateField (AADS, 0x05, One, AS02)  /* 0x00000020 */
+    CreateField (AADS, 0x06, One, AS04)  /* 0x00000040 */
+    CreateField (AADS, 0x08, One, AS05)  /* 0x00000100 */
+    CreateField (AADS, 0x10, 0x10, AS03) /* 0xFFFF0000 */
+</pre>
+
+<p>AADS is an interface to capabilities and status, a 32 bit buffer with flags. Control of the EC0 (Embedded Controller):</p>
+
+<table>
+<tr><th>Capability</th><th>Enable-bit</th><th>Device</th></tr>
+<tr><td>WLEX</td><td>WLAT</td><td>Wireless</td></tr>
+<tr><td>BTEX</td><td>BTAT</td><td>Bluetooth</td></tr>
+<tr><td>W3GE</td><td>W3GA</td><td>3G</td></tr>
+<tr><td>MPEX</td><td>MPAT</td><td>??</td></tr>
+</table>
+
+<p>It looks like these are switched through WMID (Windows). This explains why the internal ACPI handling will not switch them.</p>
+
+<p>Switched via the method WSDS(a,b) on Device WMID, WSDS(a,b) (setter), WGDS(a) (getter). The setter is called via WMBA(a,b,c). WMBA is never called internally, but is an external interface to getters/setters.</p>
+
+<p>The utility <a href="http://xf.iksaif.net/dev/wmidump.html">wmidump</a> can be used to dump the mapping between GUIDs and DSDT Method names:</p>
+<table>
+<tr><th>GUID                                  </th><th>Method  </th><th>In driver   </th><th>Type</th></tr>
+<tr><td>6AF4F258-B401-42FD-BE91-3D4AC2D7C0D3  </td><td>(WM)BA  </td><td>WMID_GUID1  </td><td>Method</tr></tr>
+<tr><td>95764E09-FB56-4E83-B31A-37761F60994A  </td><td>(WQ)AA  </td><td>WMID_GUID2  </td><td>Query block</tr></tr>
+</table>
+
+<p>These are the WMID_GUID1 and WMID_GUID2 as used in the <a href="http://rswiki.csie.org/lxr/http/source/drivers/platform/x86/acer-wmi.c">acer-wmi driver</a>. Then what is wrong, why doesn't the driver load? Probably, the interface changed a bit without changing the UUID.</p>
+
+<p>Checked using wmiiexec: WQAA returns 8 bytes now. It returns BUFF and the definition of BUFF is 
+Name (BUFF, Buffer (0x08). The driver checks the size to be 4, which of course fails. Looking at the code, the only output that is ever put into WMID_GUID2 is:</p>
+
+<table>
+<tr><th>EC0 bit      </th><th> Mem  </th><th> Bitmask (returned buffer)</th></tr>
+<tr><td>LPC.EC0.WLEX </td><td> AS00 </td><td> 0x0000000F</td></tr>
+<tr><td>LPC.EC0.BTEX </td><td> AS01 </td><td> 0x00000010</td></tr>
+<tr><td>LPC.EC0.W3GE </td><td> AS04 </td><td> 0x00000040</td></tr>
+<tr><td>LPC.EC0.MPEX </td><td> AS05 </td><td> 0x00000100</td></tr>
+</table>
+
+Now that we deducted the bits to detect Wireless and 3G, we could add this to the driver. The next step is to see if we can trigger something on the 'kill switches' (a WMI event?), and finding out what the other bits do. I just found <a href="http://code.google.com/p/aceracpi/source/browse/trunk/data/5580.mof">A list of WMID UUIDs for ACER</a>, where does the MOF file come from? Some <a href="http://strangeworlds.co.uk/blog/2007/11/">more background here</a>.
+

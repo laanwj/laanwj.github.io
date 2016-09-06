@@ -1,0 +1,45 @@
+---
+layout: post
+title: "We have to see, we have to know..."
+author: Wladimir J. van der Laan
+permalink: /2010/5/11/we-have-to-see-we-have-to-know
+tags: [dbus, debugging, intercept, ubuntu]
+categories: [linux]
+---
+
+<intro><p>Lately, I wanted debug a problem with NetworkManager. As this service communicates via DBUS I wanted to intercept all traffic on the bus to see what happens there. </p>
+
+<p>But it appears that even root doesn't have the authority to sniff the DBUS by default. In my opinion, this is a very strange default setting and makes troubleshooting unneccesarily difficult. I understand that the system bus is well-protected, but there is no extra security in disallowing root this privilege.</p>
+</intro>
+<p>I tried various "solutions" I found on google, but the only thing that worked for me is to completely disable the DBUS security policy (temporarily), replacing the <code>&lt;policy></code> in /etc/dbus/system.conf with:</p>
+
+{% highlight xml %}
+  <policy context="default">
+    <!-- All users can connect to system bus -->
+    <allow user="*"/>
+    <!-- Allow everything to be sent -->
+    <allow send_destination="*" eavesdrop="true"/>
+    <!-- Allow everything to be received -->
+    <allow eavesdrop="true"/>
+    <!-- Allow anyone to own anything -->
+    <allow own="*"/>
+  </policy>
+{% endhighlight %}
+
+<p>I also had to comment out the following, which loads a special permissions file for each installed application.</p>
+
+{% highlight xml %}
+  <includedir>system.d</includedir>
+{% endhighlight %}
+
+<p>A system restart was needed after this, after which I was finally able to see everything on the system bus. Be very careful about making changes to the system bus, because the entire system is dependent on it these days (Keyboard and mouse did not work inside X anymore after making a wrong change). 
+
+<p>After changing the security policy, you will see everything with the following command<p>
+
+{% highlight xml %}
+ dbus-monitor --system 
+{% endhighlight %}
+
+<b class="wrong">Don't do this</b> if more people can log in to your host (and access services bound on localhost), as they'll have a way to do bad stuff™. Don't forget to re-enable the security afterwards, it's there for good reason.</p>
+
+

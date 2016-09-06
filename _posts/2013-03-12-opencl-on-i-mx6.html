@@ -1,0 +1,136 @@
+---
+layout: post
+title: "OpenCL on i.MX6"
+author: Wladimir J. van der Laan
+permalink: /2013/3/12/opencl-on-i-mx6
+tags: [opencl, embedded]
+categories: [gpu]
+---
+<intro>
+<p>As a GPGPU aficionado, I am pretty excited to be able to run OpenCL on a small, low-power device. While playing around with it I wrote down some notes and performance tips.</p>
+
+<p>I'll begin with mentioning the software versions used, and a workaround that had to be in place to be able to build against OpenCL at all. After that I'll list some performance tips, and the article ends with some limitations encountered along the way.</p>
+</intro>
+
+<h4>Version</h4>
+
+<p>Hardware: GC2000, revision 0x5108, 4 shader cores.</p>
+
+<p>Software: I wanted to put the CL compiler version here, but alas the driver refused to cough up any specific version information using the OpenCL API. Anyhow, it is included with</p>
+<ul>
+<li>Freescale rootfs "L3.0.35_1.1.0_oneiric.tgz"
+<li>libHAL.so reports Vivante version "4.6.9:1478"
+</ul>
+<p>Newer versions of the driver may have solved (some of) the later mentioned limitations.</p>
+
+<pre>
+=== 1 OpenCL platform(s) found: ===
+  -- 0 --
+  PROFILE = EMBEDDED_PROFILE
+  VERSION = OpenCL 1.1 
+  NAME = Vivante OpenCL Platform
+  VENDOR = Vivante Corporation
+  EXTENSIONS = 
+=== 1 OpenCL device(s) found on platform:
+  -- 0 --
+  DEVICE_NAME = Vivante OpenCL Device
+  DEVICE_VENDOR = Vivante Corporation
+  DEVICE_VERSION = OpenCL 1.1 
+  DEVICE_EXTENSIONS = cl_khr_byte_addressable_store 
+  DRIVER_VERSION = OpenCL 1.1 
+  DEVICE_MAX_COMPUTE_UNITS = 4
+  DEVICE_MAX_CLOCK_FREQUENCY = 500
+  DEVICE_GLOBAL_MEM_SIZE = 100663296
+</pre>
+
+<h5>Workaround: link against libGAL</h5>
+
+At least on my Freescale rootfs, libOpenCL needs functions from libGAL but is not linked against it. This means that <code>-lGAL</code> has to be added to the linker command line along with <code>-lOpenCL</code>.
+
+<h4>Performance</h4>
+
+Floating point performance can be up to 16 GFLOPS according to shoc OpenCL benchmark <a href="/files/56/maxflops.txt">maxflops</a> (but beware, the board this was executed on was likely not tuned for full performance). If you want to repeat the benchmark yourself you can use my <a href="https://github.com/laanwj/shoc">shoc version</a> adapted to run on this hardware.
+
+<h5>Mind your compiler optimizations</h5>
+
+<p>A quick test revealed that adding
+<code>-cl-mad-enable -cl-unsafe-math-optimizations -cl-fast-relaxed-math</code> to <code>clBuildProgram</code> halved the number of generated instructions for a simple A*B kernel. The worst-case path was explicitly comparing to NaN and Inf, likely to enforce IEEE 754 edge-case compliance. In some cases this may be required, but keep in mind that full performance of the device can only be reached with those options enabled.</p>
+
+<h5>Use float4</h5>
+
+<p>Like on ATI hardware, float2/3/4 operations directly translate to vectorized instructions. Floating point instructions always perform operations on four values, so using smaller vectors under-utilizes the hardware. For integer operations it does not matter as the underlying instructions are scalar.</p>
+
+<p>See for example the Madd test results from shoc:</p>
+
+<pre>
+Add1-SP         Size:2097152    GFLOPS  0.891504
+Add4-SP         Size:2097152    GFLOPS  8.00293 
+Add8-SP         Size:2097152    GFLOPS  1.59215
+Add16-SP        (result missing)
+
+MAdd1-SP        Size:2097152    GFLOPS  4.58433
+MAdd4-SP        Size:2097152    GFLOPS  16.0061 
+MAdd8-SP        Size:2097152    GFLOPS  3.1843  
+MAdd16-SP      *Size:2097152    GFLOPS  14.8157 
+</pre>
+
+<p>float4 and float16 are clearly the sweet spots. I am not sure why float8 suffers, it could be due to certain instruction interleaving pattern or a compiler limitation.</p>
+
+<h5>LLVM</h5>
+
+<p>"strings" on <code>libCLC.so</code> shows that the CL compiler is based on clang+LLVM, which is an advanced optimizing compiler combo. This means there is likely some room for further performance tuning.</p>
+
+<h4>Limitations</h4>
+
+Here I've listed some limitations compared to OpenCL on giant, power-hungry PC graphics cards.
+
+<h5>Global work size</h5>
+
+<p>The GLOBAL_WORK_SIZE per dimension cannot exceed 1&lt;&lt;16 with the Vivante driver. This limitation is not documented anywhere and I am not sure if this is violation of spec, however the documentation for <code>clEnqueueNDRangeKernel</code> mentions:</p>
+
+<blockquote>
+The values specified in global_work_size + corresponding values specified in global_work_offset cannot exceed the range given by the sizeof(size_t) for the device on which the kernel execution will be enqueued. The sizeof(size_t) for a device can be determined using CL_DEVICE_ADDRESS_BITS in the table of OpenCL Device Queries for clGetDeviceInfo. If, for example, CL_DEVICE_ADDRESS_BITS = 32, i.e. the device uses a 32-bit address space, size_t is a 32-bit unsigned integer and global_work_size values must be in the range 1 .. 2^32 - 1. Values outside this range return a CL_OUT_OF_RESOURCES error.
+</blockquote>
+
+<p><code>CL_DEVICE_ADDRESS_BITS</code> is <a href="http://boundarydevices.com/ltib-image-i-mx6-sabre-lite-nitrogen6x/#comment-8759">32</a>, so if we were to believe the above snippet it should allow for very large global work sizes. Maybe it is different for the embedded profile. </p>
+
+<p>In the shoc maxflops benchmark I worked around this by emulating a larger global work size by using a 2D global work size, ie.</p>
+
+{% highlight c %}
+    /* (in invocation) */
+    size_t globalWorkSize[2] = {min(N, 65536), max(N / 65536, 1)};
+
+    /* (and in kernel) */
+    int gid = get_global_id(0) | (get_global_id(1)<<16), globalSize = get_global_size(0) * get_global_size(1);
+{% endhighlight %}
+
+<p>Another possibility proposed by <a href="https://twitter.com/pixelio">@pixelio</a> is to invoke <code>clEnqueueNDRangeKernel</code> in a loop with increasing offset. But this turned out to be problematic, as the limit holds for the work offset as well.</p>
+
+<h5>Workgroup size</h5>
+
+<p>Allowed workgroup size very strongly depends on the kernel, and can be anywhere between 16 to 256 (256 is the number of threads per shader core). Do not assume that the reported maximum work group size (1024) can be used but query it for every kernel separately. shoc fails to do this, as well as many OpenCL examples found on the web.</p>
+
+{% highlight c %}
+    clGetKernelWorkGroupInfo (ker, devid, CL_KERNEL_WORK_GROUP_SIZE, ...)
+{% endhighlight %}
+
+<p>Another potential pitfall: the returned maximum workgroup size is not always a power of two (and there is nothing in the standard that says it has to be).</p>
+
+<h5>Shader size</h5>
+
+<p>Keep your kernels small. </p>
+
+<p>As could be expected on an embedded device, it is quite easy to run out of shader memory. For example, the <a href="https://github.com/m0mchil/poclbm/blob/master/phatk.cl">bitcoin miner</a> is too large, as well as a few of the kernels used in shoc. This will result in <code>CL_OUT_OF_RESOURCES</code> errors during <code>clCreateKernel</code>.</p>
+
+<p>The "query chip identity" ioctl call on GC2000 reports an instructionCount of 512. Looking at command stream dumps from etna_viv the device appears to have 0x0E000 - 0x0C000 = 8192 bytes of instruction memory, with Vivante's 128 bit instructions this confirms that there is only room for 512 instructions. </p>
+
+<p>Unfortunately, I am not currently aware of a way to query the shader size in native instructions from the OpenCL API, as <code>CL_PROGRAM_BINARY_SIZES</code> shows the size of the IR.</p>
+
+<h5>Atomics</h5>
+
+<p>The <a href="https://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/atomicFunctions.html">OpenCL 1.1 doc</a> lists atomic functions such as <code>atomic_add</code>, but any attempt to use them (on global and local memory) resulted in "atomic function XXX not supported" compiler error.</p>
+
+<p>I've tried various ways to work around this, such as specifying <code>#pragma OPENCL EXTENSION cl_khr_global_int32_base_atomics : enable</code> (shouldn't be needed for 1.1 though), but that's greeted with "warning: pragma OPENCL EXTENSION is not supported, ignoring pragma".</p>
+
+That's all for now...
+

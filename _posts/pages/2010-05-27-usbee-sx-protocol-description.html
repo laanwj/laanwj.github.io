@@ -1,0 +1,72 @@
+---
+layout: page
+title: "USBee SX protocol description"
+author: Wladimir J. van der Laan
+permalink: /2010/5/27/usbee-sx-protocol-description
+tags: [logic analyzer, signal generation, USBee]
+categories: [embedded]
+---
+This page describes the part of the USBee SX protocol I've been able to decypher using <a href="http://www.pcausa.com/Utilities/UsbSnoop/">SniffUsb</a>. It looks like there is a separate firmwares for signal generation and capture. The endpoints used are the same, although they accept different commands on endpoint 0x01 (set state). A simple implementation of this protocol using Python and libusb can be found <a href="http://bitbucket.org/wump/usbee">on my bitbucket page</a>.
+
+<h4>USB endpoints</h4>
+<p>The endpoints are usable after the device comes out of reset.</p>
+<table>
+<tr><th>Endpoint</th><th>Description</th></tr>
+<tr><td>0x01</td><td>Set device state</td></tr>
+<tr><td>0x02</td><td>Write sample data</td></tr>
+<tr><td>0x81</td><td>Read status (0x00, 0x01, 0x02 or 0x55). Appears to be number of processed commands on endpoint 0x01. After initialization succesful, it is 0x55.</td></tr>
+<tr><td>0x86</td><td>Read sample data</td></tr>
+</table>
+<h4>State commands for Capture firmware:</h4>
+<p>Packets are always 2 bytes.</p>
+<table>
+<tr><th>Command</th><th>Description</th></tr>
+<tr><td>0x01 0x01</td><td>Sample at 24Mhz</td></tr>
+<tr><td>0x01 0x02</td><td>Sample at 16Mhz</td></tr>
+<tr><td>0x01 0x03</td><td>Sample at 12Mhz</td></tr>
+<tr><td>0x01 0x05</td><td>Sample at 8Mhz</td></tr>
+<tr><td>0x01 0x07</td><td>Sample at 6Mhz</td></tr>
+<tr><td>0x01 0x0b</td><td>Sample at 4Mhz</td></tr>
+<tr><td>0x01 0x0f</td><td>Sample at 3Mhz</td></tr>
+<tr><td>0x01 0x17</td><td>Sample at 2Mhz</td></tr>
+<tr><td>0x01 0x2f</td><td>Sample at 1Mhz</td></tr>
+</table>
+<p>After setting the state, bytes can be read from endpoint 0x86.</p>
+<h4>State commands for Signal Generation firmware:</h4>
+Base packet (always 33 bytes):<br/>
+<div class="syntax">
+<pre>0x01
+<b style="color:#FF0000">0x01 0x01 0x01 0x01</b> <b style="color:#00FF00">0x01 0x01 0x3d</b> 0x07 
+0x02 0x02 0x02 0x02 0x02 0x02 0x07 0x00 
+<b style="color:#FF8000">0xe3 0xe3 0xe3 0xe3 0xe3 0xe0 0xe2 0xe3</b>
+0x3f 0x47 0x00 0x00 0x00 0x00 0x36 0x3f 
+</pre></div>
+<p>Byte <b style="color:#FF0000">1:5</b></p>
+<table>
+<tr><th>Value</th><th>Description</th></tr>
+<tr><td>0x01 0x01 0x01 0x01</td><td>Don't care</td></tr>
+<tr><td>0x2a 0x01 0x13 0x2b</td><td>Trigger on step up</td></tr>
+<tr><td>0x2a 0x01 0x1a 0x1d</td><td>Trigger on step down</td></tr>
+<tr><td>0x2a 0x01 0x2a 0x01</td><td>Trigger on high</td></tr>
+<tr><td>0x2a 0x01 0x15 0x01</td><td>Trigger on low</td></tr>
+</table>
+<p>Byte <b style="color:#00FF00">5:8</b></p>
+<table>
+<tr><th>Value</th><th>Description</th></tr>
+<tr><td>0x01 0x01 0x3d</td><td>Send at 24Mhz</td></tr>
+<tr><td>0x01 0x01 0x3c</td><td>Send at 16Mhz</td></tr>
+<tr><td>0x02 0x03 0x3c</td><td>Send at 12Mhz</td></tr>
+<tr><td>0x03 0x04 0x3c</td><td>Send at 8Mhz</td></tr>
+<tr><td>0x05 0x06 0x3c</td><td>Send at 6Mhz</td></tr>
+<tr><td>0x07 0x08 0x3c</td><td>Send at 4Mhz</td></tr>
+<tr><td>0x0b 0x0c 0x3c</td><td>Send at 2Mhz</td></tr>
+<tr><td>0x17 0x18 0x3c</td><td>Send at 1Mhz</td></tr>
+</table>
+<p>Byte <b style="color:#FF8000">17:25</b></p>
+<table>
+<tr><th>Value</th><th>Description</th></tr>
+<tr><td>0xe3 0xe3 0xe3 0xe3 0xe3 0xe0 0xe2 0xe3</td><td>Data change on rising edge</td></tr>
+<tr><td>0xe1 0xe1 0xe1 0xe1 0xe1 0xe2 0xe0 0xe1</td><td>Data change on falling edge</td></tr>
+</table>
+<p>After setting the state, bytes can be written to endpoint 0x02. The maximum URB size is 0x10000 (65536). Make sure that data is written back-to-back, especially in the faster modes, as there is not much buffering on the device.</p>
+

@@ -1,0 +1,33 @@
+---
+layout: post
+title: "Changing tab icons in Konsole"
+author: Wladimir J. van der Laan
+permalink: /2011/4/7/changing-tab-icons-in-konsole
+tags: [tips-and-tricks,kde,konsole]
+categories: [documentation]
+---
+<intro>
+<p>Today I was looking for a way to change the color of tabs in the KDE console, Konsole, to make it apparent to which remote host they are connected through SSH. This was possible in 3.5, but no longer in 4.x. However, I discovered something more awesome: it is possible to change the tab icons (small icons next to the title) using an escape sequence.</p>
+</intro>
+
+<p>Icons can be set from a shell script with the following escape sequence:</p>
+
+{% highlight bash %}
+# Icons in standard search path
+echo -e "\033]32;dialog-warning\007"
+echo -e "\033]32;emblem-favorite\007"
+
+# Full path
+echo -e "\033]32;/home/orion/projects/icons/fugue/icons/cookie-chocolate.png\007"
+{% endhighlight %}
+
+<p>It looks like this:</p>
+
+<div style="overflow:auto; width:100%"><img src="{{ site.baseurl }}/assets{{ page.id }}/tabbar.png"></div>
+
+<p>The search path for icons in kubuntu is <code>/usr/share/icons/default.kde4</code>. It appears to be possible to use all the icons below this path, independent of category. It is also possible to specify a full path to the icon. Konsole rescales the icons to 16x16.</p>
+
+<p>This gives us a way to make "favicons for SSH sites". One way to tdo this is to integrate the sequences into the shell prompt by setting the <a target="_blank" href="http://meta.ath0.com/2006/05/24/unix-shell-games-with-kde/">PS1 and PS2 environment variables</a>. Or, maybe more convenient, you can set them on the host side before connecting through SSH. See <a href="https://gist.github.com/911215" target=_blank>this gist</a> for an example of a script that sets per-host icons, by wrapping SSH.</p>
+
+<p>With this trick, you'll never type <code>rm -rf</code> in the wrong console tab again... </p>
+

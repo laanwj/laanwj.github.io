@@ -1,0 +1,101 @@
+---
+layout: post
+title: "Etna utility update: viv_gpu_top, viv_throughput"
+author: Wladimir J. van der Laan
+permalink: /2013/9/19/etna-utility-update-viv-gpu-top-viv-throughput
+tags: [etna_viv]
+categories: [reverse-engineering, gpu]
+---
+<p>I've just pushed an update for the etna utilities. <code>viv_gpu_top</code> was extended with as much as two modes, one to watch occupancy (non-idle state) of the various modules, and one to watch the DMA hardware status. I also added an utility <code>viv_throughput</code> to benchmark the raw fillrate of the GPU.</p>
+
+<h3>viv_gpu_top</h3>
+
+<p>New mode <code>viv_gpu_top -md</code> (looks like showterm has some problems with the screen updates, filed an <a href="https://github.com/ConradIrwin/showterm.io/issues/7">github issue</a> for it). This samples the state of the DMA engine a certain number of times per second and displays statistics:
+
+<iframe src="https://showterm.herokuapp.com/ed75cf9894b5eeec9cf36#fast" width="670" height="370">
+</iframe>
+
+<p>And new mode <code>viv_gpu_top -mo</code> while running glquake. This makes it clear that none of the modules (except FE which is always at 100% unless power saving kicks in) is fully occupied while running the game, which means that there is need for CPU optimization:
+
+<iframe src="https://showterm.herokuapp.com/fee222be96c97ebbed2d7#fast" width="670" height="370"></iframe>
+
+<h3>viv_throughput</h3>
+
+<p>This one is pretty straightforward and renders off-screen quads of a specified size and with specified settings to determine the fillrate. It records the time spent rendering as well as various performance counters such as the number of stalls.</p>
+<pre>
+Usage:
+  ./viv_throughput [-w <width>] [-h <height>] [-l <0/1>] [-s <0/1>] [-t <0/1>] [-e <0/1>] [-f <frames>] [-d <0/16/32>] [-c <16/32>]
+
+  -w <width>    Width of surface (default is 1920)
+  -h <height>   Height of surface (default is 1080)
+  -l <0/1>      Clear surface every frame (0=no, 1=yes, default is 0)
+  -s <0/1>      Use supertile layout (0=no, 1=yes, default is 0)
+  -t <0/1>      Enable TS (0=no, 1=yes, default is 1)
+  -e <0/1>      Enable early Z (0=no, 1=yes, default is 0)
+  -f <frames>   Number of frames to render (default is 2000)
+  -d <0/16/32>  Depth/stencil surface depth
+  -c <16/32>    Color surface depth
+</pre>
+
+<p>For example, to benchmark with 32 bit color and no depth/stencil:</p>
+
+<pre>
+# ./viv_throughput -c 32 -d 0 -f 150
+...
+Input
+  Frame: 1920 x 1080
+  Color format: PIPE_FORMAT_B8G8R8X8_UNORM
+  Depth format: PIPE_FORMAT_NONE
+  Supertiled: 0
+  Enable TS: 1
+  Early z: 0
+  Do clear: 0
+  Num frames: 150
+  Frame size: 8.3 MB
+Statistics:
+  Elapsed time: 1.26s
+  FPS: 119.2
+  Fillrate: 988.9 MB/s
+  Vertices rendered: 600
+  Pixels rendered: 311040000
+  VS instructions: 1200
+  PS instructions: 311472000
+  Read: 0.1 MB/frame
+  Written: 8.4 MB/frame
+  Stalls on read: 0.0M/frame
+  Stalls on write request: 0.0M/frame
+  Stalls on write data: 0.0M/frame
+</pre>
+
+<p>And to benchmark with 32 bit color and 32 bit depth/stencil:</p>
+
+<pre>
+# ./viv_throughput -c 32 -d 32 -f 150
+...
+Input
+  Frame: 1920 x 1080
+  Color format: PIPE_FORMAT_B8G8R8X8_UNORM
+  Depth format: PIPE_FORMAT_S8_UINT_Z24_UNORM
+  Supertiled: 0
+  Enable TS: 1
+  Early z: 0
+  Do clear: 0
+  Num frames: 150
+  Frame size: 16.6 MB
+Statistics:
+  Elapsed time: 5.67s
+  FPS: 26.5
+  Fillrate: 438.9 MB/s
+  Vertices rendered: 600
+  Pixels rendered: 311040000
+  VS instructions: 1200
+  PS instructions: 311472000
+  Read: 8.5 MB/frame
+  Written: 16.8 MB/frame
+  Stalls on read: 2.0M/frame
+  Stalls on write request: 3.8M/frame
+  Stalls on write data: 1.6M/frame
+</pre>
+
+<p>It's clear that a lot of stalls are being generated when depth is enabled on the GC860 in JZ4770. The additional memory bandwidth for reads cannot fully explain the drop in fillrate.</p>
+

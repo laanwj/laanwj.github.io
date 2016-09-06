@@ -1,0 +1,24 @@
+---
+layout: post
+title: "Python Bytecode Archeology"
+author: Wladimir J. van der Laan
+permalink: /2011/5/4/python-bytecode-archeology
+tags: [webdev-experiments,python,opcodes]
+categories: [documentation]
+---
+
+<intro>
+<p>(Inspired by <a href="http://code.google.com/p/byteplay/" target="_blank">byteplay</a> and 
+Raymond Hettinger's old but still intriguing <a href="http://code.activestate.com/recipes/277940-decorator-for-bindingconstants-at-compile-time/" target="_blank">recipe for binding constants at compile time</a>)</p>
+</intro>
+
+<p>When playing with the <a href="http://docs.python.org/library/dis.html" target="_blank">Python Disassembler</a>, it is useful to know which bytecodes have changed between various versions of the cPython interpreter, and why. For this reason, I performed a bit of archeology on the Mercurial repository and issue database.</p>
+
+<p>Even though the developers warn that the bytecode format may change wildly between versions, in practice the instruction set has been pretty stable: of the <code>122</code> opcodes encountered, <code>72</code> have existed from version 2.0 all the way to 3.2.</p>
+
+<p>In the following table, the first column shows the name of the opcode. Hover over an opcode to show a description. The second column shows the version(s) in which that opcode was introduced, with links to the revision and the PEP/issue that describes the change if available. The third column shows the version(s) in which the opcode was removed.</p>
+<center>
+<iframe src="{{ site.baseurl }}/assets{{ page.id }}/opcodes.html" width="600" height="3000" style="border:0px">
+</iframe>
+</center>
+

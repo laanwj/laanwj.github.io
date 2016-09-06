@@ -1,0 +1,39 @@
+---
+layout: post
+title: "Etnaviv: MSAA working!"
+author: Wladimir J. van der Laan
+permalink: /2013/9/10/etna-msaa-working
+tags: [etna_viv]
+categories: [reverse-engineering, gpu]
+---
+<p>All the MSAA (Multi-sampling anti-aliasing) crash bugs appear to have been
+resolved, and every game I tried it with works!  As the GCW Zero has a 320 by 240
+screen, it is a prime candidate for anti-aliasing.</p>
+
+<style>
+.quake { text-align: center; margin: 10px; }
+</style>
+<div class="quake">
+<img src="{{ site.baseurl }}/assets{{ page.id }}/quake_msaa1x.png"><br>
+quake with MSAA 1x
+</div>
+<div class="quake">
+<img src="{{ site.baseurl }}/assets{{ page.id }}/quake_msaa2x.png"><br>
+quake with MSAA 2x
+</div>
+<div class="quake">
+<img src="{{ site.baseurl }}/assets{{ page.id }}/quake_msaa4x.png"><br>
+quake with MSAA 4x
+</div>
+
+<p>In case a game doesn't have a configuration option to set MSAA, it can be forced through debug flags in the following way</p>
+
+{% highlight bash %}
+# Force MSAA 2x
+export ETNA_DEBUG="msaa2x"
+# Force MSAA 4x
+export ETNA_DEBUG="msaa4x"
+{% endhighlight %}
+
+<p>There is a small penalty to the frame rate when enabling MSAA, but as most of the (older) games on GCW appear to be vertex or CPU limited, it is acceptable.</p>
+

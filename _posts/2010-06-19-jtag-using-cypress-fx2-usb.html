@@ -1,0 +1,39 @@
+---
+layout: post
+title: "JTAG using USBee SX"
+author: Wladimir J. van der Laan
+permalink: /2010/5/23/jtag-using-cypress-fx2-usb
+tags: [Cypress, firmware, JTAG, USB, USBee]
+categories: [embedded]
+---
+<intro>
+<p><a href="http://en.wikipedia.org/wiki/Joint_Test_Action_Group">JTAG</a> (Joint Test Action Group) is a standard commonly used for debugging circuit boards and embedded systems.</p>
+
+<p>All kinds of interesting things are possible. For embedded microcontrollers it allows reading and writing memory, re-flashing, single stepping, and other vendor-dependent operations. It also makes so-called "boundary scan" possible, overriding the physical input and output pins of the chip to test other devices connected to it. Multiple integrated circuits on a board connected in a so-called JTAG chain. This allows them all to be tested using one physical access port.
+<a href="http://www.freelabs.com/~whitis/electronics/jtag/">This page by Mark Whitis</a> gives an excellent description of JTAG and how it works...</p>
+</intro>
+<p>In addition to the (expensive) JTAG equipment for sale by the chip vendors themselves, there are several JTAG cables for sale, most of them connect to the parallel port, some newer ones connect to USB. It is also pretty doable (with a little electronics knowledge) to built one yourself. But instead of buying or building yet another cable, I want to reprogram the USBee SX logic analyzer for it. The flying leads can be used to connect to different JTAG connectors without having a bunch of adapters.
+</p>
+<p>In my <a href="/2010/5/28/pwm-on-the-usbee-hardware-using-custom-firmware">PWM project</a> I built a custom firmware that programs the I/O pins of the USBee SX. Also, there appear to be a few open source projects already around that Cypress FX2 into a JTAG adapter. It looks like this is a matter of changing the I/O ports to match the pinout.</p>
+<ul>
+<li><a href="http://ixo-jtag.sourceforge.net/ixo_de_usb_jtag.html">ixo-jtag</a> This firmware allows a USB-capable microcontroller - currently that's primarily the Cypress FX2 EZ-USB family, or an FTDI FT245  in combination with a CPLD - to act like an Altera USB-Blaster JTAG pod)</li>
+<li><a href="http://inisyn.org/src/xup/">Xilinx USB JTAG</a>  (JTAG interface using Cypress EZ-USB, bit banging)
+<li><a href="http://www.urjtag.org/">UrJTAG</a>: Universal JTAG library, supports the Xilinx and ixo-jtag cables</a>
+</ul>
+<p>The first two provide s a firmware, which is not entirely right for our case (as only PORTB is connected to the output), but it can be adapted.</p>
+
+<p>I have made an <a href="http://bitbucket.org/wump/usbee/src/tip/firmware/jtag/">adapted version</a> of ixo-jtag firmware for the USBee. The biggest problem was that 'renumeration' does not work for some reason, and I thus had to remove all USB Blaster compatibility. This is not a big loss for me, as except for off-the-shelf software compatibilty there is no need to emulate a FTDI chip at all. This means that changes to UrJTAG will be required. </p>
+
+<p>To be able to test it I made <a href="http://bitbucket.org/wump/usbee/src">some Python diagnostic tests</a> and a <a href="http://bitbucket.org/wump/usbee/src/tip/debrick/">port</a> of the HairyDairyMaid WRT54GL "debrick" tool to my interface, and attached it to the <a href="/2010/6/2/belkin-f5l049-board-pinouts">JTAG header</a> on the Belkin F5L049 board in the following way:</p>
+
+
+<center>
+<object data="{{ site.baseurl }}/assets{{ page.id }}/connections.svg" type="image/svg+xml" style="width:350px; height:256px; background:black;">
+</object>
+</center>
+
+
+<h4>TAP Reset signal</h4>
+
+<p><code>nTRST</code> is a "TAP Reset" signal and its active level is "0" (the first "n" indicates negative logic). This signal resets TAP controller independently from the CPU logic. To conform to MIPS EJTAG specifications this pin is pulled to the ground via resistor ~1KOhm to keep TAP in reset state without probe attached. If probe is controlling the device, you need to feed logical "1" to <code>nTRST</code> pin or pull this to the +VCC via ~300Ohm resistor. I wired Output Enable (OE) to this pin. This is <strong>really important</strong>, otherwise JTAG will not work.  Initially forgot this and it was in "pretend-dead" mode.</p>
+

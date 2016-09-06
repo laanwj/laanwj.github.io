@@ -1,0 +1,23 @@
+---
+layout: post
+title: "Generating signals using the USBee SX"
+author: Wladimir J. van der Laan
+permalink: /2010/5/26/generating-signals-using-the-usbee-sx
+tags: [logic analyzer, signal generation, USBee]
+categories: [embedded]
+---
+
+<intro>
+<p>The <a href="http://www.usbee.com/sx.html">signal generator program</a> packaged with the USBee does not seem very intuitive to use on first sight. Initially I was unable to change anything, wondering why clicking anywhere in the waveform doesn't do anything. I was starting to doubt that the program was functional at all. Too bad, as this was my reason to get this device instead of the <a href="http://www.saleae.com/logic/">Salae</a>.</p>
+</intro>
+
+<ul>
+<li>The default function when clicking with the mouse on the signal is to zoom/unzoom, which is pointless if you don't have a waveform yet.</li>
+<li>Clicking on anything in the "Edit Waveform" menu, or in the Help, doesn't give any feedback.</li>
+<li>On the bottom of the window it is possible to move "cursors". These don't allow to set parts of the signal.</li>
+</ul>
+<img src="{{ site.baseurl }}/assets{{ page.id }}/signal_generator.png"><br/>
+<p>Then I discovered something, when you click the toolbar button with an arrow (labeled with <b style="color:red">1</b>), it is possible to select parts of one of the 8 signals by dragging in the signal pane, and then toggling it with the level buttons (labeled with <b style="color:red">2</b>). Eureka.</p>
+<img src="{{ site.baseurl }}/assets{{ page.id }}/leds.jpg"><br/>
+<p>I've measured the generated voltage to be 3.3V (great for JTAG). To test, I've connected 8 leds. I can make them blink independently and create simple effects by manually manipulating the waveforms and looping. As the generator interface is pretty basic, I'll have to use an external program to construct waveforms for more advanced effects such as fading with PWM...</p>
+

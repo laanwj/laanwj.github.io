@@ -1,0 +1,17 @@
+---
+layout: post
+title: "Building a kernel module separately"
+author: Wladimir J. van der Laan
+permalink: /2010/5/19/build-a-single-kernel-module
+tags: [kernel,linux]
+categories: [linux]
+---
+
+I just found out how to build a single Linux kernel module from the tarball, without building the entire kernel, while using the settings of the current kernel. This can be useful if you want to patch one module to quickly try something out or debug an issue:
+
+{% highlight bash %}
+make -C /lib/modules/`uname -r`/build M=`pwd`  drivers/platform/x86/acer-wmi.ko
+{% endhighlight %}
+
+This assumes that you have the neccesary linux-headers package installed. After a shitload of "no symbol version for module_layout" errors while trying various workarounds, this was a relief.
+

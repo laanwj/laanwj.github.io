@@ -1,0 +1,64 @@
+---
+layout: page
+title: "USBee ZX DLL Routine Declarations"
+author: Wladimir J. van der Laan
+permalink: /2010/5/22/usbee-zx-dll-routine-declarations
+tags: [c, source code]
+categories: [embedded]
+---
+<p>ZX DLL Routine Declarations:</p>
+
+{% highlight c %}
+// ZX DLL Routine Declarations 
+
+// Basic I/O Routines
+CWAV_IMPORT int CWAV_API SetSignals (unsigned char State, unsigned int length, unsigned char *Bytes);
+CWAV_IMPORT int CWAV_API GetSignals (unsigned char State, unsigned int length, unsigned char *Bytes);
+CWAV_IMPORT int CWAV_API SetMode (int Mode);
+
+// SetMode definitions
+#define FAST_ONEWAY_DATA                1 
+#define SLOW_TWOWAY_DATA                0
+
+#define DATA_CHANGES_ON_RISING_EDGE                     2
+#define DATA_CHANGES_ON_FALLING_EDGE            0
+
+#define DATA_IS_SAMPLED_ON_RISING_EDGE          0
+#define DATA_IS_SAMPLED_ON_FALLING_EDGE         2
+
+#define _24MHz          (0 << 2)
+#define _12MHz          (1 << 2)
+#define _6MHz           (2 << 2)
+#define _3MHz           (3 << 2)
+#define _1MHz           (4 << 2)
+
+// Buffer Routines
+CWAV_IMPORT unsigned char * CWAV_API MakeBuffer( unsigned long Size );
+CWAV_IMPORT int CWAV_API DeleteBuffer( unsigned char *buffer );
+CWAV_IMPORT long CWAV_API SetData( unsigned long index, unsigned char value);
+
+// Logic Analyzer Declarations
+CWAV_IMPORT int CWAV_API EnumeratePods(unsigned int *Pods);
+CWAV_IMPORT int CWAV_API InitializeZXLAPod(unsigned int PodNumber);
+CWAV_IMPORT int CWAV_API StartCapture(unsigned int SampleRate, unsigned int ClockMode, unsigned char *Triggers, signed int TriggerNumber, unsigned char *buffer, unsigned long length, unsigned long poststore);
+
+CWAV_IMPORT int CWAV_API StopCapture(void);
+CWAV_IMPORT int CWAV_API CaptureStatus( char *breaks, char *running, char *triggered, long *start, long *end, long *trigger, char *full );
+CWAV_IMPORT int CWAV_API SpeedTest( void );
+
+// Signal Generator Declarations
+CWAV_IMPORT int CWAV_API InitializeZXSGPod(unsigned int PodNumber);
+CWAV_IMPORT int CWAV_API GenerateStatus( char *breaks, char *running, char *triggered, char *complete );
+CWAV_IMPORT int CWAV_API StopGenerate( void );
+CWAV_IMPORT int CWAV_API StartGenerate(unsigned int SampleRate, unsigned char triggermode, unsigned char *buffer, unsigned long length);
+
+// StartGenerate External Trigger Settings
+#define DONT_CARE_TRIGGER 0
+#define RISING_EDGE_TRIGGER 1
+#define FALLING_EDGE_TRIGGER 2
+#define HIGH_LEVEL_TRIGGER 3
+#define LOW_LEVEL_TRIGGER 4
+
+CWAV_IMPORT long CWAV_API SetData( unsigned long index, unsigned char value);
+{% endhighlight %}
+

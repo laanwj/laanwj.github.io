@@ -1,0 +1,46 @@
+---
+layout: post
+title: "Bricked F5L049, continued"
+author: Wladimir J. van der Laan
+permalink: /2010/6/4/bricked-f5l049-continued
+tags: [Belkin, F5L049, homebase, unbricking]
+categories: [embedded, reverse-engineering]
+---
+
+<intro><p>I connected a <a href="http://www.ftdichip.com/Products/EvaluationKits/TTL-232R.htm">FTDI USB to TTL 3.3v</a> serial cable to the <a href="/2010/6/2/belkin-f5l049-board-pinouts">serial header on the device</a>, and managed to get into the bootloader by a magic trick (holding the reset button at power-on and immediately releasing it). Using minicom, I got a kind of debug shell...</p>
+
+<p><img src="{{ site.baseurl }}/assets{{ page.id }}/dradenbos.jpg" title="(my hack setup with connected ethernet and serial cables)"></p>
+</intro>
+<pre>
+HEAP: addr=800740C0 size=03F8BF40
+Hello, this is CREAM for AR9130! [LOADER]
+'CAKE' CREAM Kernel debugger Ver 1.4.2
+'HeDEB' Heap debugger Ver 1.0.0
+'DISH' Debugging shell Version 2.5.0
+DISH>lx lx
+EEP:Stats[cnt1=00000014/cnt2=00000015]
+
+MAC address 00:22:75:6B:76:38
+***** NIC Initialize Start *****
+***** AR9130 Initialize Start *****
+NIC:PHY Mode...[00]<<
+<<OK
+PHY which was detected: 0xD021004D (ID)
+PHY which is assumed  : 0xD021004D (ID)
+OK! Valid EtherPHY was detected.
+AR9130: PHY Reset
+Speed/Duplex Setting:0x3300
+ROM checksum OK!
+?NIC:Packet Task Start!!
+PHY:10/100 Check START!!
+NIC: TRC Task Start!!
+FLD: nic_wait_linkup...
+
+LTRC:100Base-TX [ 100Full]<
+L<OK
+AR9130: Tx/Rx Start
+NIC: Release waiting tasks
+DISH> 
+</pre>
+<p>Interesting! I've never heard of the CREAM/CAKE debugger before, and Google is no help either. This must be some proprietary Silex product. It at least has a HELP command. As far as I see there is no command to erase/change the flash though (read/write normal memory is possible); this probably has to be done through the network. Then again, together with JTAG the way to debugging the crashed firmware is open.</p>
+

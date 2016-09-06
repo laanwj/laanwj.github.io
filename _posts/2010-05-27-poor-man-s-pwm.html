@@ -1,0 +1,99 @@
+---
+layout: post
+title: "Poor man's PWM generator"
+author: Wladimir J. van der Laan
+permalink: /2010/5/27/poor-man-s-pwm
+tags: [led, libusb, PWM, python, signal generation, USBee]
+categories: [embedded]
+---
+<intro>
+<p>In the signal generator application packaged with USBee SX, every waveform has to be manually 'designed'. I wanted to implement a led fading "chase" effect using <a href="http://en.wikipedia.org/wiki/Pulse-width_modulation">Pulse Width Modulation (PWM)</a>. It is far too much work to manually design the waveforms in that case. Also, as I wanted a solution that also works on Linux, I did not use the DLL API, but instead <a href="/2010/5/27/usbee-sx-protocol-description">what I've learnt up to now</a> about the USBee protocol and put it to use with <a href="http://pyusb.berlios.de/">Python</a> and <a href="http://www.libusb.org/">libusb</a>, a convenient way to interface to USB devices without writing kernel modules or device drivers. This is the kind of effect I wanted to achieve (works browsers supporting <a href="http://en.wikipedia.org/wiki/Canvas_element">HTML5 canvas</a> only):</p>
+</intro>
+
+<script type="application/javascript" src="{{ site.baseurl }}/assets{{ page.id }}/leds.js">
+</script>
+<p><canvas id="leds" width="250" height="40"></canvas> (<a href="{{ site.baseurl }}/assets{{ page.id }}/leds.js">js source</a>)</p>
+
+<p>First, I implemented the PWM algorithm. The most basic algorithm, <a href="http://en.wikipedia.org/wiki/Pulse-width_modulation#Time_proportioning">Time Proportioning</a>, uses a counter that increments periodically and is reset at the end of every period of the PWM. When the counter value is more than the reference value, the PWM output changes state from high to low (or low to high). To simulate this I wrote the following piece of Python to go from an array of 8 intensity levels to 256 samples in binary format efficiently:</p>
+
+{% highlight python %}
+def pwm(intensities):
+    """In: 8 intensity values 0..256, Out: 256 8-bit samples"""
+    import numpy
+    from numpy import newaxis
+    
+    intensity = numpy.array(intensities)
+   
+    # For a 256 sample PWM, generate array with numbers 0..255
+    counter = numpy.arange(256)
+
+    # Replicate 8 times to make 8 by 256 array, so we have one counter value for each output bit in each sample
+    counters = counter[:, newaxis].repeat(8, 1)
+
+    # Compare each value in the two-dimensional array to the intensity of the led it refers to
+    # This results in a 8 by 256 array of booleans, which is cast to an integer array
+    # (as numpy.packbits does not accept bool array)
+    bits = numpy.array(counters < intensity, "I")
+
+    # Pack to binary string
+    data = numpy.packbits(bits, 1).tostring()
+    
+    return data
+{% endhighlight %}
+
+<p>This allows setting the intensity of each of the 8 leds separately. Now, we just have to set up the hardware to start sending samples (see link at bottom of this post for the source code of the USBee class).</p>
+
+{% highlight python %}
+# Get handle to USBee SX device 0
+dev = USBee(0)
+
+# Put device in reset mode, send "signal generator" firmware, then take it out of
+# reset. Wait for it to become ready.
+dev.reset(1)
+f = open("firmware/firmware2.bin", "rb")
+data = f.read()
+f.close()
+dev.upload_firmware(data)
+dev.reset(0)
+dev.wait_ready()
+
+# Send at 12Mhz
+dev.set_state(B([
+    0x01, 
+    0x01, 0x01, 0x01, 0x01, 0x02, 0x03, 0x3c, 0x07,
+    0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x07, 0x00,
+    0xe3, 0xe3, 0xe3, 0xe3, 0xe3, 0xe0, 0xe2, 0xe3,
+    0x3f, 0x47, 0x00, 0x00, 0x00, 0x00, 0x36, 0x3f]))
+{% endhighlight %}
+
+<p>Then we can perform the actual effect:</p>
+
+{% highlight python %}
+intensity = [0] * 8
+delta = [x*0.33 for x in xrange(8)] # each output "lags" a bit behind the previous one
+start_time = time.time()
+period = 1
+while True:
+    t = time.time() - start_time
+    t = t/period
+    # Compute the eight intensities from current time using a triangle wave "bounce"
+    # x=0.0   0
+    # x=1.0   255
+    # x=2.0   0
+    # ...
+    for i in xrange(8):
+        x = (t - delta[i]) % 2.0
+        if x >= 1.0:
+            val = 256 - (x-1.0) * 256
+        else:
+            val = x * 256
+        intensity[i] = val 
+    # generate PWM samples
+    wave = pwm(intensity)
+    # Replicate the 256 samples 256 times, to get 64kB of data (max packet size),
+    # and send to device.
+    dev.write(wave * 256)
+{% endhighlight %}
+
+<p>The full source (including setup code) can be found <a href="http://bitbucket.org/wump/usbee">on my bitbucket page</a>, just click on "get source" or use <a href="http://mercurial.selenic.com/">Mercurial</a>. The signal generator test is <code>test.py</code>. I call this "Poor man's PWM" as the ideal solution would be to implement it on the micro-controller itself, instead of computing the waveform on the PC and sending all the data over USB. Then again, this is a proof of concept.</p>
+
