@@ -12,9 +12,9 @@ categories: [reverse-engineering]
 
 (the site is not wide enough to embed the entire thing, so it's better to follow the link).
 
-- At the left side it shows the listening post output, this is what the operative controlling it would see.
+- **At the left side** it shows the listening post output, this is what the operative controlling it would see.
 
-- At the right side scrolls by corresponding debugging output of the emulation
+- **At the right side** scrolls by corresponding debugging output of the emulation
 framework. This shows the (decrypted) packets in transfer and what the emulated implant is doing.
 
 No actual Fortinet/TOS routers were harmed in this process. [The setup]({{ site.baseurl
@@ -140,7 +140,8 @@ networkProfiler module not configured.
 - `13,0,1`: Start networkProfiler scan. This shows the command line option help output:
 
 ```
-Please enter your networkProfiler command line (-h for help, CTRL-n to cancel)?  
+Please enter your networkProfiler command line (-h for help, CTRL-n to cancel)?
+
   -S/--scantype <scan name>   name of predefined scan (enter ? to be provided with a list)
   -i/--interface <interface index (as from interface listing)>  limit to the specified interface
   -t/--traffictypes <traffic queue flags>  receive traffic of the specified types only (enter ? to be provided with a list)
