@@ -2,6 +2,8 @@
 layout: post
 title: BLATSTING Command-and-Control protocol
 author: Wladimir J. van der Laan
+tags: [eqgrp, malware]
+categories: [reverse-engineering]
 ---
 
 In this installment I'm going to describe the Command-and-Control (or C&C) protocol of BLATSTING. This the protocol used in the network traffic between the malware and what is used by the person controlling it. I'm also going to see whether this traffic can be detected.

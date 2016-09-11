@@ -27,10 +27,6 @@ jekyll serve
 <pre>
 GPG key fingerprint = 71A3 B167 3540 5025 D447  E8F2 7481 0B01 2346 C9A6
 </pre>
-- XMPP: wumpus@dukgo.com
-<pre>
-OTR fingerprint: `1724A46E 4BDDE57A D7FAD974 C4A503EE 4C632069
-</pre>
 - Freenode IRC: wumpus
 
 
