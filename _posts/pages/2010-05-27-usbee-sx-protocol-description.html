@@ -4,7 +4,7 @@ title: "USBee SX protocol description"
 author: Wladimir J. van der Laan
 permalink: /2010/5/27/usbee-sx-protocol-description
 tags: [logic analyzer, signal generation, USBee]
-categories: [embedded]
+categories: [Embedded]
 ---
 This page describes the part of the USBee SX protocol I've been able to decypher using <a href="http://www.pcausa.com/Utilities/UsbSnoop/">SniffUsb</a>. It looks like there is a separate firmwares for signal generation and capture. The endpoints used are the same, although they accept different commands on endpoint 0x01 (set state). A simple implementation of this protocol using Python and libusb can be found <a href="http://bitbucket.org/wump/usbee">on my bitbucket page</a>.
 

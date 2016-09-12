@@ -4,7 +4,7 @@ title: "Poor man's PWM generator"
 author: Wladimir J. van der Laan
 permalink: /2010/5/27/poor-man-s-pwm
 tags: [led, libusb, PWM, python, signal generation, USBee]
-categories: [embedded]
+categories: [Embedded]
 ---
 <intro>
 <p>In the signal generator application packaged with USBee SX, every waveform has to be manually 'designed'. I wanted to implement a led fading "chase" effect using <a href="http://en.wikipedia.org/wiki/Pulse-width_modulation">Pulse Width Modulation (PWM)</a>. It is far too much work to manually design the waveforms in that case. Also, as I wanted a solution that also works on Linux, I did not use the DLL API, but instead <a href="/2010/5/27/usbee-sx-protocol-description">what I've learnt up to now</a> about the USBee protocol and put it to use with <a href="http://pyusb.berlios.de/">Python</a> and <a href="http://www.libusb.org/">libusb</a>, a convenient way to interface to USB devices without writing kernel modules or device drivers. This is the kind of effect I wanted to achieve (works browsers supporting <a href="http://en.wikipedia.org/wiki/Canvas_element">HTML5 canvas</a> only):</p>

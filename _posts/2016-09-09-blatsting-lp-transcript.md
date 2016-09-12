@@ -3,7 +3,7 @@ layout: post
 title: BLATSTING C&C transcript
 author: Wladimir J. van der Laan
 tags: [eqgrp, malware]
-categories: [reverse-engineering]
+categories: [Reverse-engineering]
 ---
 
 [This showterm session](https://showterm.io/3837223140f380a948392) shows a transcript of a session controlling BLATSTING.

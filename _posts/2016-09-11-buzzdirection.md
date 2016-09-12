@@ -3,7 +3,7 @@ layout: post
 title: "BUZZDIRECTION: BLATSTING reloaded"
 author: Wladimir J. van der Laan
 tags: [eqgrp, malware]
-categories: [reverse-engineering]
+categories: [Reverse-engineering]
 ---
 
 This time I will be taking a cursory look at a different malware framework in the EQGRP free dump: BUZZDIRECTION. BUZZDIRECTION is another

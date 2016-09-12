@@ -4,7 +4,7 @@ title: "Etnaviv status update 2"
 author: Wladimir J. van der Laan
 permalink: /2013/3/29/etnaviv-status-update-2
 tags: [etna_viv]
-categories: [reverse-engineering, gpu]
+categories: [Reverse-engineering, GPU]
 ---
 <intro>
 <p><strong>Good news everyone!</strong> The TGSI to Vivante ISA shader compiler has been <a href="https://github.com/laanwj/etna_viv">pushed</a>.</p>

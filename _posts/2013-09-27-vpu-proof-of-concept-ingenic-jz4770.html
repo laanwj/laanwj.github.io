@@ -4,7 +4,7 @@ title: VPU proof of concept Ingenic JZ4770
 author: Wladimir J. van der Laan
 permalink: /2013/9/27/vpu-proof-of-concept-ingenic-jz4770
 tags: [gcwzero, vpu]
-categories: [reverse-engineering]
+categories: [Reverse-engineering]
 ---
 <p>Lately I've tried to get to the second (AUX) core of the Ingenic JZ4770 in the GCW Zero. This is part of the VPU (Video Processing Unit) and not really documented, so this was the result of quite some trial and error. But after clocking down the AHB1 bus to 166MHz I was suddenly able to reliably run code on the extra core. The interesting thing about the VPU in the JZ4770 is that it simply runs MIPS code like the main core (albeit at half clock rate) and not another "secret" ISA.</p>
 

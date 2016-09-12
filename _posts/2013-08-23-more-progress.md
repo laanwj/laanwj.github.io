@@ -1,10 +1,10 @@
 ---
 layout: post
-title: "Etna_viv: Getting there..."
+title: "Etnaviv: Getting there..."
 author: Wladimir J. van der Laan
 permalink: /2013/8/23/more-progress
 tags: [etna_viv]
-categories: [reverse-engineering, gpu]
+categories: [Reverse-engineering, GPU]
 ---
 The <a href="https://github.com/laanwj/mesa">etnaviv mesa driver</a> is coming along nicely... (thanks to zear for the glquake screenshots)
 

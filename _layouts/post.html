@@ -12,6 +12,22 @@ layout: default
   <div class="date">
     Written on {{ page.date | date: "%B %e, %Y" }}
   </div>
+  <div class="tags">
+    Tags: 
+    {% if page.tags %}
+    {% for tag in page.tags %}
+      <a href="{{ site.baseurl }}{{ site.tag_page }}#{{ tag | slugify }}" class="post-tag">{{ tag }}</a>
+    {% endfor %}
+    {% endif %}
+  </div>
+  <div class="categories">
+    Filed under
+    {% if page.categories %}
+    {% for tag in page.categories %}
+      <a href="{{ site.baseurl }}{{ site.category_page }}#{{ tag | slugify }}" class="post-tag">{{ tag }}</a>
+    {% endfor %}
+    {% endif %}
+  </div>
 
   {% include disqus.html %}
 </article>

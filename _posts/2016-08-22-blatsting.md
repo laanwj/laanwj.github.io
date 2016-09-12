@@ -3,7 +3,7 @@ layout: post
 title: BLATSTING FUNKSPIEL
 author: Wladimir J. van der Laan
 tags: [eqgrp, malware]
-categories: [reverse-engineering]
+categories: [Reverse-engineering]
 ---
 
 I've done a bit of reverse-engineering on the BLATSTING "modular rootkit" implant

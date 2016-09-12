@@ -3,7 +3,7 @@ layout: post
 title: FEINTCLOUD
 author: Wladimir J. van der Laan
 tags: [eqgrp, malware]
-categories: [reverse-engineering]
+categories: [Reverse-engineering]
 ---
 
 In the Equation Group dump many of the implants can announce themselves with

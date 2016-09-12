@@ -3,7 +3,7 @@ layout: post
 title: TADAQUEOUS moments
 author: Wladimir J. van der Laan
 tags: [eqgrp, malware]
-categories: [reverse-engineering]
+categories: [Reverse-engineering]
 ---
 
 The one mystery module in the BLATSTING rootkit/malware/implant/... in the Equation Group dump is `m12000000`, or TADAQUEOUS. There is only one mention of it in the various documentation and scripts:

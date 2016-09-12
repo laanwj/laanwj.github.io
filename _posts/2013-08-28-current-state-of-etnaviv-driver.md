@@ -4,7 +4,7 @@ title: "More etna_viv news"
 author: Wladimir J. van der Laan
 permalink: /2013/8/28/current-state-of-etnaviv-driver
 tags: [etna_viv]
-categories: [reverse-engineering, gpu]
+categories: [Reverse-engineering, GPU]
 ---
 <style>
 .quake { text-align: center; margin: 10px; }
