@@ -318,6 +318,7 @@ code.highlighter-rouge {
 }
 
 // Specific (code samples, radare-exported asm)
+code { font-family: monospace; white-space: pre; font-size: 80%; line-height: 1.0; }
 pre { font-family: monospace; white-space: pre; font-size: 80%; line-height: 1.0; }
 pre.radareasm { background-color: #000000; color: #c0c0c0; overflow: scroll; }
 

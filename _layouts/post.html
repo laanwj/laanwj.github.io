@@ -24,7 +24,7 @@ layout: default
     Filed under
     {% if page.categories %}
     {% for tag in page.categories %}
-      <a href="{{ site.baseurl }}{{ site.category_page }}#{{ tag | slugify }}" class="post-tag">{{ tag }}</a>
+      <a href="{{ site.baseurl }}{{ site.category_page }}#{{ tag | slugify }}" class="post-category">{{ tag }}</a>
     {% endfor %}
     {% endif %}
   </div>
