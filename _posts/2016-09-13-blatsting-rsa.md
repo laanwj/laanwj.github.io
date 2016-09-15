@@ -136,18 +136,22 @@ assert(rsa_encrypt(ctx, m) == bs_rsa_encrypt(ctx, m))
 ```
 
 The result matches convential RSA without pre-multiplication and with a normal pow-mod operator! So it is some kind of
-optimization, but I had not seen it before, which doesn't say that much, but it's not part of e.g. OpenSSL.
+optimization, but I had not seen it before, which doesn't say that much, <s>but it's not part of e.g. OpenSSL</s>. *Edit:
+it is, according to k240df and martins\_m [on reddit](https://www.reddit.com/r/ReverseEngineering/comments/52kr47/the_curious_case_of_blatstings_rsa_implementation/)
+this is Montgomery reduction which is in OpenSSL under `crypto/bn/bn_mont.c`. The thought came up when writing this
+that it was Montgomery reduction but I did not recognize it as such.*
 
-I'm not up to date as to what the state of the art is here, assuming 1024-bit numbers:
-A naive modulus implementation based on long division would take up to *1024* bignum comparisons and *1024* bignum subtractions,
-whereas the `weird_mod` operation takes *32* integer multiplications, *32* bignum muls, *32* bignum adds, *1* bignum compare,
-and *1* bignum sub. Whether it is a win depends on how bignum multiplication is implemented. A naive bignum
-multiplication would take up to *32\*32* integer multiplications and *32* bignum adds in which case it would not really help.
-I have not studied the particular `bn_mul` implementation in BLATSTING (address `0x080004a0`\*).
+I'm not up to date with the state of the art is with regard to efficient bignum arithmetic. Assuming 1024-bit numbers: A
+naive modulus implementation based on long division would take up to *1024* bignum comparisons and *1024* bignum
+subtractions, whereas the `weird_mod` operation takes *32* integer multiplications, *32* bignum muls, *32* bignum adds,
+*1* bignum compare, and *1* bignum sub. Whether it is a win depends on how bignum multiplication is implemented. A naive
+bignum multiplication would take up to *32\*32* integer multiplications and *32* bignum adds in which case it would not
+really help.  I have not studied the particular `bn_mul` implementation in BLATSTING (address `0x080004a0`\*).
 
-Independent of the performance characteristics, I think this alternative implementation is worth highlighting.
-It looks like a form of [Barrett reduction](https://en.wikipedia.org/wiki/Barrett_reduction), turning divisions
-into multiplies, and precomputing a multiplicant over the exact number of modular reductions required.
+Independent of the performance characteristics, I think this alternative implementation is worth highlighting,
+as it is in things like this that the Equation Group keeps true to their name. It looks like a form of [Barrett
+reduction](https://en.wikipedia.org/wiki/Barrett_reduction), turning divisions into multiplies, and precomputing a
+multiplicant over the exact number of modular reductions required.
 
 <small>\* All mentioned memory addresses are as shown by radare2, which loads the ELF part of
 Firewall/BLATSTING/BLATSTING_201381/LP/lpconfig/m01020000/m01020000.impmod at 0x08000000.</small>
