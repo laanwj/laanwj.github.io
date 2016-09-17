@@ -135,7 +135,7 @@ m = random.randint(0, (1<<1024)-1)
 assert(rsa_encrypt(ctx, m) == bs_rsa_encrypt(ctx, m))
 ```
 
-The result matches convential RSA without pre-multiplication and with a normal pow-mod operator! So it is some kind of
+The result matches convential RSA without pre-multiplication and with a normal expmod operator! So it is some kind of
 optimization, but I had not seen it before, which doesn't say that much, ~~but it's not part of e.g. OpenSSL~~. *Edit:
 it is, according to k240df and martins\_m [on reddit](https://www.reddit.com/r/ReverseEngineering/comments/52kr47/the_curious_case_of_blatstings_rsa_implementation/)
 this is Montgomery reduction which is in OpenSSL under `crypto/bn/bn_mont.c`. The thought came up when writing this

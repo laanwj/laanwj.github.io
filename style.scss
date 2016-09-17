@@ -292,6 +292,15 @@ footer {
 @import "highlights";
 @import "svg-icons";
 
+// Footnote reference
+a.footref {
+    vertical-align: super;
+    font-size: smaller;
+}
+.footdef {
+    font-size: smaller;
+}
+
 // Shade `text`
 code.highlighter-rouge {
     background-color: rgba(0,0,0,0.04);
