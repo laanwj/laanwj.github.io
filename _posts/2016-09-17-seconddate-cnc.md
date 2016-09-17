@@ -204,5 +204,5 @@ match HTTP in TCP streams with `^GET.*(?:/ |\\.(?:htm|asp|php)).*\\r\\n`, as wel
 
 <span class="footdef" id="foot2">2</span>. No hosts on the internet respond to SD packets under this key. That has been checked. Also
 it's all out in the open, no one knows how long this leak has been floating around prior to publication, and I doubt
-that I'm the first one to discover this. So it is safe to reveal. But it is fun to think that once this may have been
+that I'm the first one to discover this. So it is safe to reveal. But it is fun (or scary) to think that once this may have been
 the key to the castle for controlling a significant part of the internet.
