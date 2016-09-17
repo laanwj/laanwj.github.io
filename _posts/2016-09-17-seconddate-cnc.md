@@ -66,7 +66,7 @@ fields should be used to access the parameters. These were not part of the debug
 discover playing with the LP program:
 
 | ----- | ------------ | ---------- |
-|  op   | description  | parameter  |
+| type  | description  | parameter  |
 | ----- | ------------ | ---------- |
 |  0x01 | ping         | *N/A*      |
 |  0x02 | set rule     | rule       |
