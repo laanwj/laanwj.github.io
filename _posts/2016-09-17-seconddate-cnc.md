@@ -170,7 +170,7 @@ LP always uses source port `32768` and a random destination port).
 done.  Munging is the term that the Equation Group uses for simple obfuscation. Anyhow a `xorkey = munge - 0x61e57cc6`
 is computed and the entire packet is XORed with the 4-byte word.
 
-- Then, the packet is decrypted using RC6 in [CTR (counter mode)](https://en.wikipedia.org/wiki/CTR_mode), instead of CFB
+- Then, the packet is decrypted using RC6 in [CTR (counter mode)](https://en.wikipedia.org/wiki/CTR_mode), instead of OFB
   mode as in BLATSTING C&C. The counter is part of every packet, as header field `encCounter`.
 
 - After this the packet is dispatched for command processing.
