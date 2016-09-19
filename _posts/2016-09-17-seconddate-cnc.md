@@ -194,7 +194,7 @@ the "keying system", which is missing from this dump for all of the frameworks, 
 
 {: .center}
 ![Wireshark dump of SECONDDATE C&C packets]({{ site.baseurl }}/assets{{ page.id }}/wireshark.png "Wireshark dump of SECONDDATE C&C packets")
-*Screenshot of a Wireshark dump of SECONDDATE C&C packets. Would be nice to have a dissector...*
+*Screenshot of a Wireshark dump of SECONDDATE C&C packets. Would be nice to have a dissector... Here's the accompanying [seconddate.cap]({{ site.baseurl }}/assets{{ page.id }}/seconddate.cap) file.*
 
 I hope this article gives enough information to detect SD C&C usage in the wild. I may do a [LP transcript]({{
 site.baseurl }}/2016/09/09/blatsting-lp-transcript.html) or demo of using the implant later on. Also I think
