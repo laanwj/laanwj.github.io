@@ -23,7 +23,7 @@ This alone puts up some challenges for reverse-engineering. I have mainly looked
 as I'm furthest with analyzing that framework, but at first sight it appears that the SD
 modules for all these frameworks are based on the same underlying code - much of the binary and its data matches.
 
-The primary reason for its large size appears to be that it contains a copy of the regular expression library
+The primary reason for its large size appears to be that it contains a copy of the open source regular expression library
 [PCRE](http://www.pcre.org/)<a href="#foot1" class="footref">1</a> as well as a weighty part of a C library required to
 support that, statically linked.
 
@@ -191,6 +191,10 @@ There appears to be no way to change or override the key externally, although th
 the "keying system", which is missing from this dump for all of the frameworks, changes the key in the binary.
 
 ### Conclusion
+
+{: .center}
+![Wireshark dump of SECONDDATE C&C packets]({{ site.baseurl }}/assets{{ page.id }}/wireshark.png "Wireshark dump of SECONDDATE C&C packets")
+*Screenshot of a Wireshark dump of SECONDDATE C&C packets. Would be nice to have a dissector...*
 
 I hope this article gives enough information to detect SD C&C usage in the wild. I may do a [LP transcript]({{
 site.baseurl }}/2016/09/09/blatsting-lp-transcript.html) or demo of using the implant later on. Also I think

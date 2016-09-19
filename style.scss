@@ -301,6 +301,12 @@ a.footref {
     font-size: smaller;
 }
 
+// Use this for centering images
+// {: .center}
+.center {
+    text-align: center;
+}
+
 // Shade `text`
 code.highlighter-rouge {
     background-color: rgba(0,0,0,0.04);
