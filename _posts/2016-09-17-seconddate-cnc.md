@@ -44,7 +44,9 @@ typedef struct
   int munge; /* +0x0 */
   int magic; /* +0x4 */
   int checkSum; /* +0x8 */
+  /* De-munging and checksum XORing starts here */
   unsigned char encCounter[8]; /* +0xc */
+  /* Decryption starts here */
   int encMagic; /* +0x14 */
   int sequenceNum; /* +0x18 */
   unsigned int type; /* +0x1c */
@@ -173,7 +175,7 @@ is computed and the entire packet is XORed with the 4-byte word.
 - Then, the packet is decrypted using RC6 in [CTR (counter mode)](https://en.wikipedia.org/wiki/CTR_mode)<a href="#foot1" class="footref">3</a>, instead of OFB
   mode as in BLATSTING C&C. The counter is part of every packet, as header field `encCounter`.
 
-- After this the packet is dispatched for command processing.
+- `encMagic` is checked to be `0x9e 0x1a 0x83 0x3a`. If this matches, the packet is dispatched for command processing.
 
 It does not look like the packets are authenticated in any way. There is no MAC. This is usually a bad idea, but even more with
 crypto modes such as CCM that use the underlying block cipher as a stream cipher. Bits can be flipped for a lot of fun
