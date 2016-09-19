@@ -170,7 +170,7 @@ LP always uses source port `32768` and a random destination port).
 done.  Munging is the term that the Equation Group uses for simple obfuscation. Anyhow a `xorkey = munge - 0x61e57cc6`
 is computed and the entire packet is XORed with the 4-byte word.
 
-- Then, the packet is decrypted using RC6 in [CTR (counter mode)](https://en.wikipedia.org/wiki/CTR_mode), instead of OFB
+- Then, the packet is decrypted using RC6 in [CTR (counter mode)](https://en.wikipedia.org/wiki/CTR_mode)<a href="#foot1" class="footref">3</a>, instead of OFB
   mode as in BLATSTING C&C. The counter is part of every packet, as header field `encCounter`.
 
 - After this the packet is dispatched for command processing.
@@ -210,3 +210,8 @@ match HTTP in TCP streams with `^GET.*(?:/ |\\.(?:htm|asp|php)).*\\r\\n`, as wel
 it's all out in the open, no one knows how long this leak has been floating around prior to publication, and I doubt
 that I'm the first one to discover this. So it is safe to reveal. But it is fun (or scary) to think that once this may have been
 the key to the castle for controlling a significant part of the internet.
+
+<span class="footdef" id="foot3">3</span>. Details: It is standard 20-round RC6, with blocksize 128 bits. [Example C
+implementation](https://github.com/radare/radare2/blob/master/libr/crypto/p/crypto_rc6.c). Counter is
+padded to input block as `<8b counter (big endian)><8b 0>`, then encrypted to generate keystream. Initial value of
+counter is in the packet, after each block the counter is increased with 1.
