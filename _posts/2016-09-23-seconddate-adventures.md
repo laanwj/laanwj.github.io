@@ -1,6 +1,6 @@
 ---
 layout: post
-title: SD in action
+title: SECONDDATE in action
 author: Wladimir J. van der Laan
 tags: [eqgrp, malware]
 categories: [Reverse-engineering]
@@ -38,9 +38,9 @@ This will allow using SECONDDATE as it was intended to be used, to redirect webs
 virtual network). The attacker runs a web server to redirect the victim to, which serves exploit payloads (a FOXACID
 server, in Equation Group jargon).
 
-<iframe src="http://showterm.io/252abdc707d56d893210a" width="640" height="420"></iframe>
+<iframe src="https://showterm.io/252abdc707d56d893210a" width="640" height="420"></iframe>
 
-[Showterm session](http://showterm.io/252abdc707d56d893210a) of the experiment described here.
+[Showterm session](https://showterm.io/252abdc707d56d893210a) of the experiment described here.
 
 ### Setup: Attacker
 
