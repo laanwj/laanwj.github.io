@@ -95,7 +95,7 @@ to happen, the time between injections and so on and so on, but the defaults wor
 ```
 
 {: .center}
-*`regex_tcp`: The regular expression to match on TCP packets. This looks for HTTP GET requests to the root, any protocol.
+*`regex_tcp`: The regular expression to match on TCP packets. This looks for HTTP GET requests to the root, any version.
 This can be any valid [PCRE](https://www.debuggex.com/cheatsheet/regex/pcre) regular expression.*
 
 ```bash
