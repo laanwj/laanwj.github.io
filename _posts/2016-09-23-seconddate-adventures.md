@@ -162,8 +162,8 @@ What happens:
 {: .center}
 [![Injected packet in wireshark]({{ site.baseurl }}/assets{{ page.id }}/injection.png "Injected packet in wireshark")]({{ site.baseurl }}/assets{{ page.id }}/injection.png)
 
-*Injected packet as seen from the inside network. The RST going to both the webserver and client to immediately
-end the connection afterward is also visible. The full captures can be downloaded below.*
+*Injected packet as seen from the inside network. The RSTs going to both the webserver and client to immediately
+end the connection afterward are also visible. The full captures can be downloaded below.*
 
 - Victim is redirected to `http://192.168.1.100/exploit.html`, and will load whatever is on that page. 
 
