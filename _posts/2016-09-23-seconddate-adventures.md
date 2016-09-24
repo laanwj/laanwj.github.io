@@ -157,7 +157,13 @@ What happens:
 *The website of ACME Internet Widgits Ltd., which has a world-wide monopoly on delivering Schrödinger's boxes by drone. Cat not included.*
 
 - SD, running on the compromised router, triggers on the first content packet of this connection, eats it, and instead injects a packet to redirect
-  to the attacker's server. It resets the connection to the original web server with a TCP RST packet.
+  to the attacker's server, then immediately closes the connection. It resets the connection to the original web server with a TCP RST packet.
+
+{: .center}
+[![Injected packet in wireshark]({{ site.baseurl }}/assets{{ page.id }}/injection.png "Injected packet in wireshark")]({{ site.baseurl }}/assets{{ page.id }}/injection.png)
+
+*Injected packet as seen from the inside network. The RST going to both the webserver and client to immediately
+end the connection afterward is also visible. The full captures can be downloaded below.*
 
 - Victim is redirected to `http://192.168.1.100/exploit.html`, and will load whatever is on that page. 
 
