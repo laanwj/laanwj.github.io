@@ -27,6 +27,7 @@ jekyll serve
 <pre>
 GPG key fingerprint = 71A3 B167 3540 5025 D447  E8F2 7481 0B01 2346 C9A6
 </pre>
+- Twitter: <a href="https://twitter.com/orionwl">orionwl</a>
 - Freenode IRC: wumpus
 
 
