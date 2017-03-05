@@ -173,7 +173,7 @@ CloudABI project:
 - LibreSSL
 - ZeroMQ (for asynchronous notification support)
 
-The following need to be ported:
+The following might need to be ported (but see under "Missing Features"):
 
 - BerkeleyDB (for wallet support)
 
@@ -229,3 +229,9 @@ The current version of this work can be found in my
 
 *Edit.1*: Remove mention that ZeroMQ is not ported. It has been ported now.
 That was quick!
+
+*Edit.2*: Soften requirement to port BerkeleyDB. I'd prefer if no one would waste
+time on that. Better to switch away from Berkeley DB (as it's overkill
+for what we're doing, and questionable license-wise) so I'd say don't bother
+with that one.
+
