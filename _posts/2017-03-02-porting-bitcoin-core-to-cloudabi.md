@@ -171,11 +171,11 @@ CloudABI project:
 - boost (though `boost::filesystem` is problematic)
 - libevent
 - LibreSSL
+- ZeroMQ (for asynchronous notification support)
 
 The following need to be ported:
 
 - BerkeleyDB (for wallet support)
-- ZeroMQ (for asynchronous notification support)
 
 These would be pointless in CloudABI:
 
@@ -214,8 +214,8 @@ until the wallet is supported.
 to external scripts using `system()`, such as used for `-blocknotify` and `-walletnotify` are disabled. As it can only
 inherit bitcoind's restricted capabilities, there is nothing
 useful that such a script could do. Network-based
-notifications will have to be used (though currently zeromq is
-not available either).
+notifications will have to be used (ZeroMQ is available, another
+option is [long-polling over RPC](https://github.com/bitcoin/bitcoin/pull/7949) which is in the works).
 
 - **Torcontrol**: To support this, a handle to the Tor control socket could be
 passed in. This can be left for later as there are some
@@ -227,3 +227,5 @@ straightforward to configure Tor and bitcoin statically.
 The current version of this work can be found in my
 [2017\_03\_cabi\_fs](https://github.com/laanwj/bitcoin/tree/2017_03_cabi_fs) branch.
 
+*Edit.1*: Remove mention that ZeroMQ is not ported. It has been ported now.
+That was quick!
