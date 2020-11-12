@@ -15,7 +15,7 @@ When I drilled down to find the cause it became apparent that RPC calls such as
 `getnewaddress` were much slower (up to 10 times, when compared to bare metal on
 older hardware). It turns out that this is because the wallet code does an `fsync`
 after every operation to make sure that changes to the database are safely
-wrtten to disk (for example in the case of a power failure), and these happen
+written to disk (for example in the case of a power failure), and these happen
 to be slow in this environment.
 
 In tests, all state is deleted afterwards so this extra robustness isn't
@@ -54,7 +54,7 @@ in the case of libvirt is configured in the XML description, e.g.
 
 ### Conclusion
 
-Both in the case of a `qcow2` virtual disk and when passing though a
+Both in the case of a `qcow2` virtual disk and when passing through a
 block device, the cache setting makes a significant impact on performance. `unsafe`
 caching, which disables `fsync` completely, results in the fastest test runs.
 This can make almost a factor 4 difference compared to the slowest option,
