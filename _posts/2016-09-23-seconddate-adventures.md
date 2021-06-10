@@ -29,7 +29,7 @@ SimInternet, level 2
        ┃              ║ │ [stub]│ ┆                ║ "outside" ┃   ║ Int. Widgits Ltd ║
        ┃     "inside" ║ │ core  │┌▼───────┐ Emu.nw.║ eth1      ┃   ╚══════════════════╝
        ┃         eth2 ║ └───────┘│ [stub] ◀┄┄┄┄┄┄┄┄▶◀━━━━━━━━━━┛
-       ┗━━━━━━━━━━━━━▶◀┄┄┄┄┄┄┄┄┄┄▶ network│ Stck   ║  Eth-over-UDP 
+       ┗━━━━━━━━━━━━━▶◀┄┄┄┄┄┄┄┄┄┄▶ network│ Stack  ║  Eth-over-UDP 
                       ║          └────────┘        ║               
                       ╚════════════════════════════╝
 </pre>
@@ -61,7 +61,7 @@ rule [rulenum] [opts ...]           Sets options for a rule.
                                      (defaults are shown in parentheses):
                                      [--srcaddr addr(0)] [--srcmask mask(0)]
                                      [--dstaddr addr(0)] [--dstmask mask(0)]
-                                     [--protocol prot(6/TCP)] [--srcport port(0)] [--dstport port(0)]
+                                     [--protocol port(6/TCP)] [--srcport port(0)] [--dstport port(0)]
                                      [--mininterval(60)] [--maxinjections(5)] [--injectwindow(0)]
                                      [--checkhttp (default) | --nocheckhttp]
                                      [--checkregex (default) | --nocheckregex]

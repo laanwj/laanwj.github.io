@@ -68,7 +68,7 @@ In the future, different file handles could be passed in for
 the different directories, e.g. to place the block index
 somewhere else as that wallet. But this functionality is not
 available in the upstream implementation either (except by a
-symlink hack) so the infrastructure still has to be writtenanyhow.
+symlink hack) so the infrastructure still has to be written anyhow.
 
 #### boost::filesystem
 
@@ -106,7 +106,7 @@ You could say that for a P2P client it is fairly important to be able to make
 outgoing connections. Outgoing network connections are not
 possible without an external helper. A simple workaround for
 this would be to use of a SOCKS proxy (such as Tor) which acts
-as guard. File descriptors of connections to this proxy would
+as a guard. File descriptors of connections to this proxy would
 be passed in by an external utility (although I'm not sure how
 this is done yet).
 
@@ -133,7 +133,7 @@ operating systems, a nested structure (to be precise,
 
 There is nothing forbidding passing all configuration
 arguments in one array within the structure and simply passing
-that to `ParseParameters` as if it came in in `argc` and `argv`. However, we can do better.
+that to `ParseParameters` as if it came in `argc` and `argv`. However, we can do better.
 
 Instead I've opted to [add argument processing code](https://github.com/laanwj/bitcoin/blob/2017_03_cabi_fs/src/bitcoind.cpp#L237) to take a
 map of option name to option value(s). An example configuration:
