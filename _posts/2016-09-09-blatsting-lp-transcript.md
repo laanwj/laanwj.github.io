@@ -6,11 +6,7 @@ tags: [eqgrp, malware]
 categories: [Reverse-engineering]
 ---
 
-[This showterm session](https://showterm.io/3837223140f380a948392) shows a transcript of a session controlling BLATSTING.
-
-<iframe src="https://showterm.io/3837223140f380a948392" width="700" height="700"></iframe>
-
-(the site is not wide enough to embed the entire thing, so it's better to follow the link).
+*(this showed a terminal session from showterm.io of a session controlling BLATSTING, but the content is no longer available)*
 
 - **At the left side** it shows the listening post output, this is what the operative controlling it would see.
 

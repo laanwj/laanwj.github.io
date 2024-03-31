@@ -38,9 +38,7 @@ This will allow using SECONDDATE as it was intended to be used, to redirect webs
 virtual network). The attacker runs a web server to redirect the victim to, which serves exploit payloads (a FOXACID
 server, in Equation Group jargon).
 
-<iframe src="https://showterm.io/252abdc707d56d893210a" width="640" height="420"></iframe>
-
-[Showterm session](https://showterm.io/252abdc707d56d893210a) of the experiment described here.
+*(this showed a terminal session from showterm.io, but the content is no longer available)*
 
 ### Setup: Attacker
 
