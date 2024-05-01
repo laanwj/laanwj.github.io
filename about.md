@@ -10,7 +10,7 @@ various advantages:
 - The integrity and authenticity of this site can be checked by verifying that the commits are signed by my GPG key.
   Commits are also timestamped with [opentimestamps](https://opentimestamps.org/).
 
-- It is possible to check it out locally and read it offine, I've aimed to make most posts readable with a text editor.
+- It is possible to check it out locally and read it offline, I've aimed to make most posts readable with a text editor.
   You can also build and view the site locally:
 
 ```bash
